@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddStockComponent } from './add-stock.component';
+import { TransMainComponent } from './trans-main.component';
 
-describe('AddStockComponent', () => {
-  let component: AddStockComponent;
-  let fixture: ComponentFixture<AddStockComponent>;
+describe('TransMainComponent', () => {
+  let component: TransMainComponent;
+  let fixture: ComponentFixture<TransMainComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddStockComponent]
+      imports: [TransMainComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddStockComponent);
+    fixture = TestBed.createComponent(TransMainComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

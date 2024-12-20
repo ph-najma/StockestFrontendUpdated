@@ -1,13 +1,31 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { UserHeaderComponent } from '../user-header/user-header.component';
+import { ApiService } from '../../services/api.service';
+import { Transaction } from '../../services/api.service';
 @Component({
   selector: 'app-transaction-history',
-  imports: [CommonModule],
+  imports: [CommonModule, UserHeaderComponent],
   templateUrl: './transaction-history.component.html',
   styleUrl: './transaction-history.component.css',
 })
-export class TransactionHistoryComponent {
+export class TransactionHistoryComponent implements OnInit {
+  transactionData: Transaction[] = [];
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.fetchTransactions();
+  }
+
+  fetchTransactions(): void {
+    this.apiService.getTransactions().subscribe({
+      next: (data) => {
+        this.transactionData = data;
+        console.log(data, 'from transactions');
+      },
+    });
+  }
+
   columnVisibility: Record<
     'id' | 'companyName' | 'shares' | 'total' | 'status',
     boolean
@@ -20,32 +38,6 @@ export class TransactionHistoryComponent {
   };
 
   isColumnDropdownOpen = false;
-
-  // Sample transaction data
-  transactionData = [
-    {
-      id: 'TX001',
-      date: '2024-12-07',
-      type: 'Buy',
-      symbol: 'AAPL',
-      companyName: 'Apple Inc.',
-      shares: 50,
-      price: 150,
-      total: 7500,
-      status: 'Completed',
-    },
-    {
-      id: 'TX002',
-      date: '2024-12-06',
-      type: 'Sell',
-      symbol: 'GOOGL',
-      companyName: 'Google LLC',
-      shares: 30,
-      price: 1200,
-      total: 36000,
-      status: 'Completed',
-    },
-  ];
 
   toggleColumnDropdown(): void {
     this.isColumnDropdownOpen = !this.isColumnDropdownOpen;

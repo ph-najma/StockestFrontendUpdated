@@ -1,0 +1,40 @@
+<div class="p-6">
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-3 text-left">Symbol</th>
+          <th class="p-3 text-left">Company</th>
+          <th class="p-3 text-right">Shares</th>
+          <th class="p-3 text-right">Current Price</th>
+          <th class="p-3 text-right">Total Value</th>
+          <th class="p-3 text-right">Today's Change</th>
+          <th class="p-3 text-right">Portfolio Allocation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of portfolio" class="border-b hover:bg-gray-50">
+          <td class="p-3 font-medium">{{ stock.stock.symbol }}</td>
+          <td class="p-3">{{ stock.stock.symbol }}</td>
+          <td class="p-3 text-right">{{ stock.quantity }}</td>
+          <td class="p-3 text-right">${{ stock.stock.price }}</td>
+
+          <td class="p-3 text-right">
+            ${{ stock.totalValue | number : "1.0-2" }}
+          </td>
+          <td
+            class="p-3 text-right"
+            [ngClass]="{
+              'text-green-600': stock.stock.change >= 0,
+              'text-red-600': stock.stock.change < 0
+            }"
+          >
+            {{ stock.stock.change >= 0 ? "+" : ""
+            }}{{ stock.stock.change.toFixed(2) }}%
+          </td>
+          <td class="p-3 text-right">{{ stock.allocation?.toFixed(2) }}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

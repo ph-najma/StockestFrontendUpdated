@@ -17,7 +17,6 @@ export interface Stock {
   latestTradingDay: string;
 }
 export interface Order {
-  user: string; // Assuming you have the user's ID available
   stock: string;
   type: 'BUY' | 'SELL';
   orderType: 'MARKET' | 'LIMIT' | 'STOP';
@@ -42,7 +41,9 @@ export class StockService {
     });
   }
   getStocks(): Observable<Stock[]> {
-    return this.http.get<Stock[]>(`${this.apiUrl}/stocklist`);
+    return this.http.get<Stock[]>(`${this.apiUrl}/stocklist`, {
+      headers: this.getAuthHeaders(),
+    });
   }
   updateStock(id: string, stock: Stock): Observable<Stock> {
     console.log(id, stock, 'from service');
@@ -50,18 +51,30 @@ export class StockService {
   }
 
   deleteStock(id: string | undefined): Observable<Stock> {
-    return this.http.put<Stock>(`${this.apiUrl}/softDeleteStock/${id}`, {});
+    return this.http.put<Stock>(`${this.apiUrl}/softDeleteStock/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
   }
   displayStocks(): Observable<Stock[]> {
     return this.http.get<Stock[]>(`${this.apiUrl}/dispalyStocks`);
   }
   placeOrder(order: Order): Observable<Order> {
-    return this.http.post<Order>(`${this.apiUrl}/orders`, order);
+    return this.http.post<Order>(`${this.apiUrl}/orders`, order, {
+      headers: this.getAuthHeaders(),
+    });
   }
   placeBuyOrder(order: Order): Observable<Order> {
     return this.http.post<Order>(`${this.apiUrl}/orders`, order);
   }
-  checkPortfolio(order: Order): Observable<Order> {
+  checkPortfolio(order: any): Observable<Order> {
     return this.http.post<Order>(`${this.apiUrl}/checkPortfolio`, order);
+  }
+  getUserMargins(): Observable<{
+    availableMargin: number;
+    requiredMargin: number;
+  }> {
+    return this.http.get<{ availableMargin: number; requiredMargin: number }>(
+      `${this.apiUrl}/margins`
+    );
   }
 }

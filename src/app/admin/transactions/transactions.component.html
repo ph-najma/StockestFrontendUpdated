@@ -1,0 +1,274 @@
+<app-header></app-header>
+<div class="flex">
+  <aside class="w-1/4 bg-white p-6 border-r">
+    <div class="flex flex-col space-y-4">
+      <button
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-700 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Dashboard
+      </button>
+      <a
+        routerLink="/userList"
+        class="bg-blue-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Users
+      </a>
+      <a
+        routerLink="/list"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Stocks
+      </a>
+      <button
+        routerLink="/ordermanagement"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Order Management
+      </button>
+      <button
+        routerLink="/allTransactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Transactions
+      </button>
+      <button
+        routerLink="/transactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Transaction Fees
+      </button>
+      <button
+        routerLink="/limit"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Set Limits
+      </button>
+    </div>
+  </aside>
+  <div class="max-w-7xl mx-auto p-6 space-y-6 bg-gray-50 mt-6">
+    <h1 class="text-3xl font-bold text-blue-800 mb-6">
+      Transaction Fees Management
+    </h1>
+
+    <!-- Fee Structure Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md border border-blue-100">
+      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mr-2 text-blue-600"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-percent"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0zm0 14a6 6 0 1 1 6-6 6 6 0 0 1-6 6zm-1-3h2V9H7v2zM7 4h2v2H7V4z"
+          />
+        </svg>
+        Fee Structure
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Standard Commission Rate (%)
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="feeStructure.standardCommissionRate"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Flat Transaction Fee ($)
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="feeStructure.flatTransactionFee"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      <!-- Volume Discounts Table -->
+      <h3 class="text-lg font-semibold mb-3 text-gray-800">Volume Discounts</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse bg-white">
+          <thead>
+            <tr class="bg-blue-50">
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Min Volume
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Max Volume
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Discount Rate (%)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let discount of feeStructure.volumeDiscounts"
+              class="hover:bg-blue-50"
+            >
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ discount.minVolume }}
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ discount.maxVolume }}
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ discount.discountRate * 100 }}%
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Promotions Management Section -->
+    <div class="bg-white p-6 rounded-lg shadow-md border border-blue-100">
+      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mr-2 text-blue-600"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-tag"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M0 4.5v7a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H1.5A1.5 1.5 0 0 0 0 4.5zm8 0h6v7H8V4.5z"
+          />
+        </svg>
+        Promotions Management
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse bg-white">
+          <thead>
+            <tr class="bg-blue-50">
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Promotion Name
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Type
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Discount
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                Start Date
+              </th>
+              <th
+                class="border border-gray-200 p-3 text-left text-sm font-medium text-gray-700"
+              >
+                End Date
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let promo of promotions" class="hover:bg-blue-50">
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ promo.name }}
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ promo.type }}
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ promo.discountValue }}%
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ promo.startDate | date : "shortDate" }}
+              </td>
+              <td class="border border-gray-200 p-3 text-gray-800">
+                {{ promo.endDate | date : "shortDate" }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Promotion Button -->
+      <button
+        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        (click)="addPromotion()"
+      >
+        Add New Promotion
+      </button>
+    </div>
+
+    <!-- Fee Collection Summary -->
+    <div class="bg-white p-6 rounded-lg shadow-md border border-blue-100">
+      <h2 class="text-xl font-semibold mb-4 flex items-center text-blue-900">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mr-2 text-blue-600"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-cash"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M4.5 4H14V5H4.5v10H14v1H4.5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4.5 4z"
+          />
+        </svg>
+        Fee Collection Summary
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Total Fees Collected
+          </label>
+          <p class="text-2xl font-bold text-blue-800">
+            ${{ feeSummary.totalFeesCollected.toFixed(2) }}
+          </p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Period Start
+          </label>
+          <p class="text-gray-800">
+            {{ feeSummary.periodStart | date : "shortDate" }}
+          </p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Period End
+          </label>
+          <p class="text-gray-800">
+            {{ feeSummary.periodEnd | date : "shortDate" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Generate Report Button -->
+      <button
+        class="mt-4 px-4 py-2 bg-blue-50 text-blue-800 rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
+        (click)="generateReport()"
+      >
+        Generate Detailed Report
+      </button>
+    </div>
+  </div>
+</div>

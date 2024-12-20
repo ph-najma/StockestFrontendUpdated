@@ -5,49 +5,61 @@
   <aside class="w-1/4 bg-white p-6 border-r">
     <div class="flex flex-col space-y-4">
       <button
-        class="bg-green-200 py-3 px-4 text-left rounded-lg text-gray-700 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-700 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Dashboard
       </button>
       <a
         routerLink="/userList"
-        class="bg-green-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Users
       </a>
       <a
         routerLink="/list"
-        class="bg-green-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Stocks
       </a>
       <button
         routerLink="/ordermanagement"
-        class="bg-green-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Order Management
       </button>
       <button
-        class="bg-green-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        routerLink="/allTransactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Transactions
       </button>
+      <button
+        routerLink="/transactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Transaction Fees
+      </button>
+      <button
+        routerLink="/limit"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Set Limits
+      </button>
     </div>
   </aside>
-
   <!-- Main Dashboard Content -->
   <main class="flex-1 p-6 bg-gray-50">
     <!-- Dashboard Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
       <!-- Total Active Users Card -->
-      <div class="bg-green-50 p-6 rounded-lg shadow-md">
+      <div class="bg-indigo-50 p-6 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold text-gray-800">Total Active Users</h2>
         <p class="text-4xl font-bold text-gray-900 mt-2">1,234</p>
         <p class="text-sm text-gray-500">+123 new registrations this week</p>
       </div>
 
       <!-- Portfolio Statistics Card -->
-      <div class="bg-green-50 p-6 rounded-lg shadow-md">
+      <div class="bg-indigo-50 p-6 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold text-gray-800">
           Portfolio Statistics
         </h2>
@@ -58,7 +70,7 @@
       </div>
 
       <!-- Session Statistics Card -->
-      <div class="bg-green-50 p-6 rounded-lg shadow-md">
+      <div class="bg-indigo-50 p-6 rounded-lg shadow-md">
         <h2 class="text-lg font-semibold text-gray-800">Session Statistics</h2>
         <p class="text-4xl font-bold text-gray-900 mt-2">567</p>
         <p class="text-sm text-gray-500">Completed: 512, Canceled: 55</p>
@@ -66,7 +78,7 @@
     </div>
 
     <!-- Trading Volume & Transactions -->
-    <div class="bg-green-50 p-6 rounded-lg shadow-md">
+    <div class="bg-indigo-50 p-6 rounded-lg shadow-md">
       <h2 class="text-lg font-semibold text-gray-800">
         Trading Volume & Transactions
       </h2>

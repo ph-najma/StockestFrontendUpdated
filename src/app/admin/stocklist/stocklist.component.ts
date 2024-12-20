@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StockService, Stock } from '../../services/stock.service';
 import { HeaderComponent } from '../header/header.component';
 import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component';
@@ -11,8 +11,9 @@ import { RouterModule } from '@angular/router';
   templateUrl: './stocklist.component.html',
   styleUrl: './stocklist.component.css',
 })
-export class StocklistComponent implements OnInit {
+export class StocklistComponent implements OnInit, OnDestroy {
   stocks: Stock[] = [];
+  private stockUpdateInterval: NodeJS.Timeout | null = null;
 
   constructor(private stockService: StockService) {}
 
@@ -37,6 +38,7 @@ export class StocklistComponent implements OnInit {
   }
   ngOnInit(): void {
     this.fetchStocks();
+    this.startStockDataUpdates();
   }
   fetchStocks(): void {
     this.stockService.getStocks().subscribe({
@@ -47,5 +49,17 @@ export class StocklistComponent implements OnInit {
         console.error('Error fetching stocks:', err);
       },
     });
+  }
+
+  startStockDataUpdates(): void {
+    this.stockUpdateInterval = setInterval(() => {
+      this.fetchStocks();
+    }, 60000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.stockUpdateInterval) {
+      clearInterval(this.stockUpdateInterval);
+    }
   }
 }

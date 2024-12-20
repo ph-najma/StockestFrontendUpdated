@@ -11,27 +11,25 @@
       <!-- Main Content -->
       <div class="w-3/4">
         <div
-          class="bg-gray-800 shadow-lg rounded-lg overflow-hidden border border-gray-700"
+          class="bg-gray-900 shadow-lg rounded-lg overflow-hidden border border-gray-700"
         >
-          <div class="bg-gray-700 px-8 py-6 border-b border-gray-600">
-            <h2 class="text-2xl font-extrabold text-green-400">
+          <div class="bg-gray-900 px-8 py-6 border-b border-gray-600">
+            <h2 class="text-xl font-bold text-white tracking-tight">
               Stock Market Overview
             </h2>
           </div>
 
-          <div *ngFor="let stock of stocks" class="divide-y divide-gray-700">
+          <div *ngFor="let stock of stocks" class="divide-y divide-gray-900">
             <div
               class="flex items-center justify-between px-8 py-6 hover:bg-gray-700 transition ease-in-out duration-200"
             >
               <!-- Stock Info -->
               <div class="flex items-center space-x-4">
-                <span
-                  class="bg-green-800 text-green-300 px-4 py-2 rounded-lg font-bold"
-                >
+                <span class="text-green-300 px-4 py-2 rounded-lg font-semibold">
                   {{ stock.symbol }}
                 </span>
                 <div>
-                  <p class="text-lg text-gray-100 font-medium">
+                  <p class="text-xl text-gray-100 font-medium">
                     {{ stock.company?.name }}
                   </p>
                 </div>
@@ -39,37 +37,35 @@
 
               <!-- Price Info -->
               <div class="text-right space-y-1">
-                <p class="text-2xl font-bold text-gray-100">
+                <p class="text-lg font-bold text-gray-100">
                   ${{ stock.price.toFixed(2) }}
                 </p>
                 <span
                   class="text-lg"
                   [ngClass]="{
-                    'text-green-400': stock.changePercent > 0,
-                    'text-red-400': stock.changePercent <= 0
+                    'text-green-400': stock.change > 0,
+                    'text-red-400': stock.change <= 0
                   }"
                 >
-                  {{ stock.changePercent > 0 ? "+" : ""
-                  }}{{ stock.changePercent }}%
+                  {{ stock.change > 0 ? "+" : "" }}{{ stock.change }}%
                 </span>
               </div>
 
               <!-- Volume & Market Cap -->
               <div class="text-sm text-gray-400 space-y-1">
                 <p>Volume: {{ stock.volume | number }}</p>
-                <p>Market Cap: ${{ stock.company?.marketCap | number }}</p>
               </div>
 
               <!-- Action Buttons -->
               <div class="flex space-x-3">
                 <button
-                  class="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700"
+                  class="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition duration-200"
                   (click)="openBuyModal(stock)"
                 >
                   Buy
                 </button>
                 <button
-                  class="bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700"
+                  class="bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700 transition duration-200"
                   (click)="openSellModal(stock)"
                 >
                   Sell
@@ -164,7 +160,7 @@
       <!-- Margin Info -->
       <div class="text-sm text-gray-400 space-y-2 mt-4">
         <p>Margin Required: ₹ marginRequired</p>
-        <p>Available Balance: ₹ availableBalance</p>
+        <p>Available Balance: ₹ {{ userBalance }}</p>
       </div>
 
       <!-- Action Buttons -->
@@ -178,7 +174,7 @@
         </button>
         <button
           type="submit"
-          class="bg-red-600 text-white px-5 py-3 rounded-lg"
+          class="bg-red-600 text-white px-5 py-3 rounded-lg hover:bg-red-700 transition duration-200"
         >
           Sell
         </button>
@@ -266,7 +262,7 @@
       <!-- Market Depth and Margin Info -->
       <div class="text-sm text-gray-400 space-y-2 mt-4">
         <p>Margin Required: ₹ marginRequired</p>
-        <p>Available Balance: ₹ availableBalance</p>
+        <p>Available Balance: ₹ {{ userBalance }}</p>
       </div>
 
       <!-- Action Buttons -->
@@ -280,7 +276,7 @@
         </button>
         <button
           type="submit"
-          class="bg-green-600 text-white px-5 py-3 rounded-lg"
+          class="bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition duration-200"
         >
           Buy
         </button>

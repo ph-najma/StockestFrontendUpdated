@@ -3,7 +3,7 @@ import { HeaderComponent } from '../header/header.component';
 import { RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { CommonModule } from '@angular/common';
-import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component';
+import { IOrder } from '../../services/order.service';
 
 @Component({
   selector: 'app-order-management',
@@ -12,8 +12,8 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
   styleUrl: './order-management.component.css',
 })
 export class OrderManagementComponent implements OnInit {
-  orders: any[] = [];
-  filteredOrders: any[] = [];
+  orders: IOrder[] = [];
+  filteredOrders: IOrder[] = [];
   currentFilter: string = 'PENDING';
 
   constructor(private orderservice: OrderService) {}
@@ -24,7 +24,9 @@ export class OrderManagementComponent implements OnInit {
     this.orderservice.getOrders().subscribe(
       (data) => {
         this.orders = data;
+        console.log(this.orders);
         this.filterOrders(this.currentFilter);
+
         console.log(data);
       },
       (error) => {
@@ -35,7 +37,8 @@ export class OrderManagementComponent implements OnInit {
   filterOrders(status: string): void {
     this.currentFilter = status;
     this.filteredOrders = this.orders.filter(
-      (order) => order.status === status
+      (order) => order.status === this.currentFilter
     );
+    console.log(`Filtered Orders for status "${status}":`, this.filteredOrders);
   }
 }

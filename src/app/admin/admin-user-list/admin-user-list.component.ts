@@ -2,17 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { ApiService } from '../../services/api.service';
 import { User } from '../../services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-admin-user-list',
-    imports: [HeaderComponent],
-    templateUrl: './admin-user-list.component.html',
-    styleUrl: './admin-user-list.component.css'
+  selector: 'app-admin-user-list',
+  imports: [HeaderComponent],
+  templateUrl: './admin-user-list.component.html',
+  styleUrl: './admin-user-list.component.css',
 })
 export class AdminUserListComponent implements OnInit {
   users: User[] = [];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
   ngOnInit(): void {
     this.fetchUsers();
   }
@@ -45,5 +46,8 @@ export class AdminUserListComponent implements OnInit {
         alert(`Failed to ${is_Blocked ? 'enable' : 'disable'} the user.`);
       },
     });
+  }
+  viewPortfolio(userId: string) {
+    this.router.navigate(['portfolioAdmin', userId]);
   }
 }

@@ -1,52 +1,69 @@
 <app-header></app-header>
 <div class="flex h-screen">
+  <!-- Sidebar -->
   <aside class="w-1/4 bg-white p-6 border-r">
     <div class="flex flex-col space-y-4">
       <button
-        class="bg-gray-200 py-3 px-4 text-left rounded-lg text-gray-700 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-700 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Dashboard
       </button>
       <a
         routerLink="/userList"
-        class="bg-gray-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Users
       </a>
       <a
         routerLink="/list"
-        class="bg-gray-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Stocks
       </a>
       <button
         routerLink="/ordermanagement"
-        class="bg-gray-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Order Management
       </button>
       <button
-        class="bg-gray-100 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-green-400"
+        routerLink="/allTransactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
       >
         Transactions
       </button>
+      <button
+        routerLink="/transactions"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Transaction Fees
+      </button>
+      <button
+        routerLink="/limit"
+        class="bg-blue-50 py-3 px-4 text-left rounded-lg text-gray-500 font-semibold hover:bg-blue-100 focus:outline-none hover:text-blue-800"
+      >
+        Set Limits
+      </button>
     </div>
   </aside>
-  <div class="w-3/4 flex flex-col">
-    <div class="w-full bg-green-50 shadow-md rounded-lg overflow-hidden">
+
+  <!-- Main Content Area -->
+  <div class="flex-1 p-6 overflow-y-auto">
+    <!-- Table Container -->
+    <div class="bg-blue-50 shadow-md rounded-lg overflow-hidden">
       <table class="w-full border-collapse">
-        <thead class="bg-green-100/50">
+        <thead class="bg-blue-100">
           <tr>
-            <th class="p-3 text-left flex items-center text-green-800">
+            <th class="p-3 text-left flex items-center text-black">
               Symbol
-              <button class="ml-2 hover:bg-green-200 rounded-full p-1">
+              <button class="ml-2 hover:bg-blue-200 rounded-full p-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="h-4 w-4 text-green-600"
+                  class="h-4 w-4 text-gray-600"
                 >
                   <path
                     stroke-linecap="round"
@@ -56,11 +73,10 @@
                 </svg>
               </button>
             </th>
-            <th class="p-3 text-left text-green-800">Company Name</th>
-            <th class="p-3 text-right text-green-800">Price</th>
-            <th class="p-3 text-right text-green-800">Change</th>
-            <th class="p-3 text-left text-green-800">Status</th>
-            <th class="p-3 text-right text-green-800">Actions</th>
+            <th class="p-3 text-left text-black">Company Name</th>
+            <th class="p-3 text-right text-black">Price</th>
+            <th class="p-3 text-right text-black">Change</th>
+            <th class="p-3 text-left text-black">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -68,9 +84,9 @@
             *ngFor="let stock of stocks"
             class="border-b border-green-100 hover:bg-green-50/30 transition-colors"
           >
-            <td class="p-3 font-medium text-green-900">{{ stock.symbol }}</td>
-            <td class="p-3 text-green-800">{{ stock.timestamp }}</td>
-            <td class="p-3 text-right font-medium text-green-900">
+            <td class="p-3 font-medium text-gray-800">{{ stock.symbol }}</td>
+            <td class="p-3 text-gray-800">{{ stock.timestamp }}</td>
+            <td class="p-3 text-right font-medium text-gray-900">
               ${{ stock.price }}
             </td>
             <td
@@ -84,79 +100,6 @@
               <span class="px-2 py-1 rounded-full text-xs font-medium">
                 active
               </span>
-            </td>
-            <td class="p-3 text-right relative">
-              <div class="inline-block">
-                <button
-                  (click)="toggleDropdown(stock._id)"
-                  class="hover:bg-green-200 rounded-full p-1"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5 text-green-700"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 12h12M6 6h12M6 18h12"
-                    />
-                  </svg>
-                </button>
-                <div
-                  *ngIf="dropdownOpen === stock._id"
-                  class="absolute right-3 mt-2 w-48 bg-green-50 shadow-lg rounded-md border border-green-100 z-10"
-                >
-                  <button
-                    (click)="editStock(stock.symbol)"
-                    class="flex items-center w-full p-2 text-left hover:bg-green-100 text-sm text-green-800"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="mr-2 h-4 w-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M16.862 4.487a2.25 2.25 0 112.729 3.427l-8.256 8.256-3.564.398.398-3.564 8.256-8.256z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19.5 19.5h-6.75"
-                      />
-                    </svg>
-                    Edit
-                  </button>
-                  <button
-                    (click)="deleteStock(stock.symbol)"
-                    class="flex items-center w-full p-2 text-left hover:bg-green-100 text-sm text-red-600"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="mr-2 h-4 w-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    Delete
-                  </button>
-                </div>
-              </div>
             </td>
           </tr>
         </tbody>

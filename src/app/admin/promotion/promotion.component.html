@@ -1,0 +1,71 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Promotional Rewards Management</h1>
+
+  <div class="tabs">
+    <div class="tabs-list flex space-x-4 border-b mb-6">
+      <button class="tabs-trigger" [class.active]="true">Sign-up Bonus</button>
+      <button class="tabs-trigger">Referral Program</button>
+      <button class="tabs-trigger">Loyalty Rewards</button>
+    </div>
+
+    <div class="tabs-content">
+      <!-- Sign-up Bonus -->
+      <div class="space-y-4" *ngIf="true">
+        <div class="mb-6 p-4 border rounded-md">
+          <h2 class="text-lg font-medium flex items-center gap-2 mb-4">
+            <lucide-icon name="gift" size="18"></lucide-icon> Sign-up Bonus
+            Settings
+          </h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <label for="signup-enabled">Enable Sign-up Bonus</label>
+              <input
+                type="checkbox"
+                formControlName="enabled"
+                id="signup-enabled"
+                class="switch"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label for="signup-amount">Bonus Amount ($)</label>
+                <input
+                  id="signup-amount"
+                  type="number"
+                  formControlName="amount"
+                  class="input"
+                />
+              </div>
+              <div class="space-y-2">
+                <label for="signup-minimum">Minimum Deposit Required ($)</label>
+                <input
+                  id="signup-minimum"
+                  type="number"
+                  formControlName="minimumDepositRequired"
+                  class="input"
+                />
+              </div>
+              <div class="space-y-2">
+                <label for="signup-expiry">Expiry Period (Days)</label>
+                <input
+                  id="signup-expiry"
+                  type="number"
+                  formControlName="expiryDays"
+                  class="input"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Repeat for Referral Program and Loyalty Rewards -->
+    </div>
+  </div>
+
+  <div class="mt-6 flex justify-end gap-4">
+    <button class="btn btn-outline" (click)="cancelChanges()">
+      Cancel Changes
+    </button>
+    <button class="btn" (click)="saveChanges()">Save Changes</button>
+  </div>
+</div>

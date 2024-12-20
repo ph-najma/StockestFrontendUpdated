@@ -11,8 +11,7 @@ import { UserProfileComponent } from './user/user-profile/user-profile.component
 import { nonautheticatedGuard } from './nonautheticated.guard';
 import { SubAdminLoginComponent } from './admin/sub-admin-login/sub-admin-login.component';
 import { SubLoginComponent } from './user/sub-login/sub-login.component';
-import { AddStockComponent } from './admin/add-stock/add-stock.component';
-import { AddCompanyComponent } from './admin/add-company/add-company.component';
+
 import { UserStockListComponent } from './user/user-stock-list/user-stock-list.component';
 import { OrderManagementComponent } from './admin/order-management/order-management.component';
 import { LimitOrdersComponent } from './admin/limit-orders/limit-orders.component';
@@ -23,8 +22,13 @@ import { ViewDetailsComponent } from './admin/view-details/view-details.componen
 import { ModernSerachBarComponent } from './modern-serach-bar/modern-serach-bar.component';
 
 import { PortfolioComponent } from './user/portfolio/portfolio.component';
-import { TransactionHistoryComponent } from './transaction-history/transaction-history.component';
+import { TransactionHistoryComponent } from './user/transaction-history/transaction-history.component';
 import { StocklistComponent } from './admin/stocklist/stocklist.component';
+import { TransactionsComponent } from './admin/transactions/transactions.component';
+import { TransMainComponent } from './admin/trans-main/trans-main.component';
+import { PortfolioAdminComponent } from './admin/portfolio-admin/portfolio-admin.component';
+import { LimitAdminComponent } from './admin/limit-admin/limit-admin.component';
+import { PromotionComponent } from './admin/promotion/promotion.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'signup', pathMatch: 'full' },
@@ -33,6 +37,7 @@ export const routes: Routes = [
     component: SignUpComponent,
     canActivate: [nonautheticatedGuard],
   },
+  //User Routes
   {
     path: 'login',
     component: SubLoginComponent,
@@ -57,6 +62,32 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'userProfile',
+    component: UserProfileComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'stocks',
+    component: UserStockListComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'portfolio',
+    component: PortfolioComponent,
+  },
+  {
+    path: 'transactionhistory',
+    component: TransactionHistoryComponent,
+    canActivate: [authGuard],
+  },
+  //Admin Routes
+
+  {
+    path: 'adminLogin',
+    component: SubAdminLoginComponent,
+  },
+
+  {
     path: 'adminHome',
     component: AdminDashboardComponent,
     canActivate: [authGuard],
@@ -67,27 +98,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-  {
-    path: 'adminLogin',
-    component: SubAdminLoginComponent,
-  },
-
-  {
-    path: 'userProfile',
-    component: UserProfileComponent,
-    canActivate: [authGuard],
-  },
-
-  {
-    path: 'addCompany',
-    component: AddCompanyComponent,
-    canActivate: [authGuard],
-  },
-  { path: 'addStock', component: AddStockComponent, canActivate: [authGuard] },
-  {
-    path: 'stocks',
-    component: UserStockListComponent,
-  },
   {
     path: 'ordermanagement',
     component: OrderManagementComponent,
@@ -123,13 +133,22 @@ export const routes: Routes = [
     component: ModernSerachBarComponent,
   },
 
+  { path: 'list', component: StocklistComponent, canActivate: [authGuard] },
   {
-    path: 'portfolio',
-    component: PortfolioComponent,
+    path: 'transactions',
+    component: TransactionsComponent,
+    canActivate: [authGuard],
   },
   {
-    path: 'transactionhistroy',
-    component: TransactionHistoryComponent,
+    path: 'allTransactions',
+    component: TransMainComponent,
+    canActivate: [authGuard],
   },
-  { path: 'list', component: StocklistComponent },
+  {
+    path: 'portfolioAdmin/:userId',
+    component: PortfolioAdminComponent,
+    canActivate: [authGuard],
+  },
+  { path: 'limit', component: LimitAdminComponent, canActivate: [authGuard] },
+  { path: 'promotions', component: PromotionComponent },
 ];

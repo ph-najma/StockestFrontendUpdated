@@ -1,0 +1,71 @@
+<div class="bg-white shadow rounded-lg">
+  <table class="w-full">
+    <thead class="bg-blue-100">
+      <tr>
+        <th class="p-3 text-left">Transaction ID</th>
+        <th class="p-3 text-left">Buyer</th>
+        <th class="p-3 text-left">Seller</th>
+        <th class="p-3 text-left">Type</th>
+        <th class="p-3 text-left">Stock</th>
+        <th class="p-3 text-right">Quantity</th>
+        <th class="p-3 text-right">Price</th>
+        <th class="p-3 text-right">Total</th>
+        <th class="p-3 text-left">Date</th>
+        <th class="p-3 text-left">Status</th>
+        <th class="p-3 text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let transaction of transactions; let index = index"
+        class="border-b hover:bg-blue-50"
+      >
+        <td class="p-3">{{ index + 1 }}</td>
+        <td class="p-3">{{ transaction.buyer.name }}</td>
+        <td class="p-3">{{ transaction.seller.name }}</td>
+        <td class="p-3">
+          <span
+            class="px-2 py-1 rounded-full text-xs font-semibold"
+            [ngClass]="{
+              'bg-green-100 text-green-800': transaction.type === 'Buy',
+              'bg-red-100 text-red-800': transaction.type === 'Sell'
+            }"
+          >
+            {{ transaction.type }}
+          </span>
+        </td>
+        <td class="p-3">{{ transaction.stock.symbol }}</td>
+        <td class="p-3 text-right">{{ transaction.quantity }}</td>
+        <td class="p-3 text-right">${{ transaction.price.toFixed(2) }}</td>
+        <td class="p-3 text-right">${{ transaction.total.toFixed(2) }}</td>
+        <td class="p-3">{{ transaction.date | date }}</td>
+        <td class="p-3">
+          <span
+            class="px-2 py-1 rounded-full text-xs font-semibold"
+            [ngClass]="{
+              'bg-green-100 text-green-800': transaction.status === 'Completed',
+              'bg-yellow-100 text-yellow-800':
+                transaction.status === 'Processing'
+            }"
+          >
+            {{ transaction.status }}
+          </span>
+        </td>
+        <td class="p-3 text-center">
+          <button class="hover:bg-gray-200 p-2 rounded">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M6 14l6 6 6-6" />
+            </svg>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

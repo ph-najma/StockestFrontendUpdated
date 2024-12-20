@@ -18,6 +18,18 @@ export interface User {
   createdAt: Date;
   is_Blocked: boolean;
 }
+export interface Transaction {
+  _id: string;
+  buyer: User;
+  seller: User;
+  type: string;
+  stock: Stock;
+  quantity: number;
+  price: number;
+  totalAmount: number;
+  completedAt: Date;
+  status: string;
+}
 export interface Company {
   symbol: string;
   name: string;
@@ -28,10 +40,29 @@ export interface Company {
 }
 export interface Stock {
   symbol: string;
+  open?: number;
+  change: number;
   price: number;
   volume: number;
   changePercent: number;
   company?: Company; // Optional field if it can be empty
+}
+export interface PortfolioItem {
+  stock: Stock;
+  quantity: number;
+  currentValue?: number;
+  overallProfit?: number;
+  todaysProfit?: number;
+  totalValue?: number;
+  allocation?: number;
+}
+
+export interface PortfolioResponse {
+  user: User;
+  portfolio: PortfolioItem[];
+  totalPortfolioValue: number;
+  overallProfit: number;
+  todaysProfit: number;
 }
 
 @Injectable({
@@ -121,9 +152,16 @@ export class ApiService {
     });
   }
   getStocks(): Observable<any[]> {
+    console.log('hello from service');
     return this.http.get<any[]>(`${this.apiUrl}/stocks`, {
       headers: this.getAuthHeaders(),
     });
+  }
+  updateUserPortfolio(updatedPortfolio: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/updatePortfolio`,
+      updatedPortfolio
+    );
   }
   addCompany(data: Company): Observable<Company> {
     console.log(data);
@@ -133,12 +171,48 @@ export class ApiService {
     console.log(data, 'from service');
     return this.http.post<Stock>(`${this.apiUrl}/addStock`, data);
   }
-  getPortfolio(): Observable<any[]> {
+  getPortfolio(): Observable<PortfolioResponse> {
     console.log('hello from service');
-    return this.http.get<any[]>(`${this.apiUrl}/portfolio`, {
+    return this.http.get<PortfolioResponse>(`${this.apiUrl}/portfolio`, {
       headers: this.getAuthHeaders(),
     });
   }
+  getTransactions(): Observable<any[]> {
+    console.log('hello from t serice');
+    return this.http.get<any[]>(`${this.apiUrl}/transactions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getAllTrans(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/allTransactions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getUserPortfolio(userId: string | null): Observable<PortfolioResponse> {
+    return this.http.get<PortfolioResponse>(
+      `${this.apiUrl}/userPortfolio/${userId}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+  }
+  getTotalFees(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getFees`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getLimits(): Observable<any> {
+    console.log('hello from sefice');
+    return this.http.get<any>(`${this.apiUrl}/limit`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  saveLimits(limits: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/updateLimit`, limits, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
   logout() {
     localStorage.removeItem('token');
     alert(
