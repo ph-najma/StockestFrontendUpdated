@@ -16,10 +16,12 @@
             "outputPath": "dist/angular-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": ["src/polyfills.ts"],
+
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
+              "src/_redirects",
 
               {
                 "glob": "**/*",
@@ -27,15 +29,20 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "crypto-browserify",
+              "stream-browserify",
+              "assert"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.2mb",
+                  "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",

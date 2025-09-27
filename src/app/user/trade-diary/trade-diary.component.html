@@ -1,0 +1,568 @@
+<!-- trade-diary.component.html -->
+<app-user-header></app-user-header>
+
+<div class="min-h-screen bg-slate-50">
+  <!-- Main Container -->
+  <div class="flex-1 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white border-b border-slate-200 shadow-sm">
+      <div class="px-8 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <!-- <h1 class="text-2xl font-semibold text-slate-900">
+              Trader's Diary for NIZAM
+            </h1> -->
+            <p class="text-sm text-slate-600 mt-1">
+              Track and analyze your trading performance
+            </p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-5 h-5 text-slate-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                ></path>
+              </svg>
+              <svg
+                class="w-5 h-5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+            </div>
+            <div class="bg-slate-100 rounded-lg p-2">
+              <p-calendar
+                [(ngModel)]="selectedDate"
+                dateFormat="yy-mm-dd"
+                [showTime]="true"
+                showButtonBar="true"
+                (onSelect)="fetchdata()"
+                class="custom-calendar"
+              ></p-calendar>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Summary -->
+    <div class="px-8 py-6">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-slate-900">
+            Performance Summary
+          </h2>
+          <div class="flex items-center space-x-2 text-sm text-slate-600">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <span>Updated: just now</span>
+          </div>
+        </div>
+
+        <div
+          class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 p-4 rounded-lg"
+        >
+          <div class="flex items-center space-x-2">
+            <div
+              class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center"
+            >
+              <svg
+                class="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <p class="text-green-900 font-semibold">
+              Win Rate: {{ tradeData.winRate }}% | Avg Win: ₹{{
+                tradeData.averageWin
+              }}
+              | Avg Loss: ₹{{ tradeData.averageLoss }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-slate-900">View Options</h2>
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            *ngFor="let view of ['daily', 'monthly', 'custom']"
+            (click)="setSelectedView(view)"
+            class="px-6 py-2 rounded-lg font-medium transition-all duration-200"
+            [ngClass]="
+              selectedView === view
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            "
+          >
+            {{ view.charAt(0).toUpperCase() + view.slice(1) }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-slate-900">Calendar View</h2>
+          <div class="flex items-center space-x-4">
+            <button
+              (click)="prevMonth()"
+              class="p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200"
+            >
+              <svg
+                class="w-5 h-5 text-slate-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              </svg>
+            </button>
+            <span class="font-medium text-slate-900">{{
+              getMonthYear(selectedDate)
+            }}</span>
+            <button
+              (click)="nextMonth()"
+              class="p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200"
+            >
+              <svg
+                class="w-5 h-5 text-slate-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="grid grid-cols-7 gap-1">
+          <div
+            *ngFor="
+              let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            "
+            class="text-center p-3 text-sm font-medium text-slate-600 bg-slate-50 rounded-lg"
+          >
+            {{ day }}
+          </div>
+          <button
+            *ngFor="let day of getDaysInMonth(selectedDate); let i = index"
+            [ngClass]="{
+              invisible: day === null,
+              'bg-blue-100 border-blue-200 text-blue-900 relative': day === 5,
+              'bg-slate-50 hover:bg-slate-100 text-slate-900':
+                day !== null && day !== 5,
+              'border border-slate-200': day !== null
+            }"
+            class="p-3 text-center rounded-lg transition-all duration-200 font-medium"
+            (click)="onDayClick(day)"
+          >
+            {{ day }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Trade Summary Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Daily Summary Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-slate-900">
+              Trade Summary for {{ selectedDate | date : "dd MMM yyyy" }}
+            </h3>
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              <svg
+                class="w-4 h-4 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                ></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Overall P&L</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                ₹{{ getTradeSummary("overallPL") }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Net P&L</p>
+              <p
+                class="text-xl font-bold mt-1"
+                [ngClass]="
+                  tradeData.netPL >= 0 ? 'text-green-600' : 'text-red-600'
+                "
+              >
+                ₹{{ getTradeSummary("netPL").toFixed(2) }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4 col-span-2">
+              <p class="text-sm font-medium text-slate-600">Total Trades</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                {{ getTradeSummary("trades") }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall Summary Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-slate-900">
+              Overall Summary
+            </h3>
+            <div class="flex items-center space-x-2">
+              <svg
+                class="w-4 h-4 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              <svg
+                class="w-4 h-4 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                ></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Overall P&L</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                ₹{{ tradeData.overallPL.toFixed(2) }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Net P&L</p>
+              <p
+                class="text-xl font-bold mt-1"
+                [ngClass]="
+                  tradeData.netPL >= 0 ? 'text-green-600' : 'text-red-600'
+                "
+              >
+                ₹{{ tradeData.netPL.toFixed(2) }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Total Trades</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                {{ tradeData.totalTrades }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4">
+              <p class="text-sm font-medium text-slate-600">Charges</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                ₹{{ tradeData.charges.toFixed(2) }}
+              </p>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4 col-span-2">
+              <p class="text-sm font-medium text-slate-600">Brokerage</p>
+              <p class="text-xl font-bold text-slate-900 mt-1">
+                ₹{{ tradeData.brokerage.toFixed(2) }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trades Table -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-slate-900">Trade History</h2>
+          <div class="flex items-center space-x-2 text-sm text-slate-600">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2a2 2 0 002-2z"
+              ></path>
+            </svg>
+            <span>Trade records</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-slate-200">
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  Trade Day
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  No. of Trades
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  Overall P&L
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  Net P&L
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  Status
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-900">
+                  Transaction
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let trade of tradeData.trades"
+                class="border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors duration-150"
+                (click)="handleTradeClick(trade)"
+              >
+                <td class="py-4 px-4 text-slate-900 font-medium">
+                  {{ trade.date }}
+                </td>
+                <td class="py-4 px-4 text-slate-700">{{ trade.trades }}</td>
+                <td class="py-4 px-4 text-slate-900 font-medium">
+                  ₹{{ trade.overallPL.toFixed(2) }}
+                </td>
+                <td
+                  class="py-4 px-4 font-medium"
+                  [ngClass]="
+                    trade.netPL >= 0 ? 'text-green-600' : 'text-red-600'
+                  "
+                >
+                  ₹{{ trade.netPL.toFixed(2) }}
+                </td>
+                <td class="py-4 px-4">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': trade.netPL >= 0,
+                      'bg-red-100 text-red-800': trade.netPL < 0
+                    }"
+                  >
+                    {{ trade.status }}
+                  </span>
+                </td>
+                <td class="py-4 px-4">
+                  <button
+                    class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+                  >
+                    View
+                    <svg
+                      class="w-3 h-3 ml-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      ></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Trade Details Modal -->
+      <div
+        *ngIf="showTradeDetails && selectedTrade"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        >
+          <div
+            class="flex items-center justify-between p-6 border-b border-slate-200"
+          >
+            <h3 class="text-xl font-semibold text-slate-900">Trade Details</h3>
+            <button
+              (click)="setShowTradeDetails(false)"
+              class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors duration-150"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="p-6 space-y-6">
+            <div
+              *ngFor="let detail of selectedTrade?.details; let idx = index"
+              class="bg-slate-50 rounded-lg p-6 border border-slate-200"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-slate-600 font-medium">{{
+                  detail.time
+                }}</span>
+                <span
+                  class="px-3 py-1 rounded-full text-sm font-medium"
+                  [ngClass]="
+                    detail.type === 'BUY'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  "
+                >
+                  {{ detail.type }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white rounded-lg p-4">
+                  <p class="text-sm font-medium text-slate-600">Symbol</p>
+                  <p class="text-lg font-semibold text-slate-900 mt-1">
+                    {{ detail.symbol }}
+                  </p>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="text-sm font-medium text-slate-600">Quantity</p>
+                  <p class="text-lg font-semibold text-slate-900 mt-1">
+                    {{ detail.quantity }}
+                  </p>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="text-sm font-medium text-slate-600">Entry</p>
+                  <p class="text-lg font-semibold text-slate-900 mt-1">
+                    ₹{{ detail.entry }}
+                  </p>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="text-sm font-medium text-slate-600">Exit</p>
+                  <p class="text-lg font-semibold text-slate-900 mt-1">
+                    ₹{{ detail.exit }}
+                  </p>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                  <p class="text-sm font-medium text-slate-600">P&L</p>
+                  <p
+                    class="text-lg font-semibold mt-1"
+                    [ngClass]="
+                      detail.pnl >= 0 ? 'text-green-600' : 'text-red-600'
+                    "
+                  >
+                    ₹{{ detail.pnl }}
+                  </p>
+                </div>
+                <div
+                  class="bg-white rounded-lg p-4 md:col-span-2 lg:col-span-1"
+                >
+                  <p class="text-sm font-medium text-slate-600">Notes</p>
+                  <p class="text-sm text-slate-700 mt-1">{{ detail.notes }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

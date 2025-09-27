@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import {
   OrderService,
   IOrder,
   ITransaction,
 } from '../../services/order.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component';
 @Component({
-    selector: 'app-view-details',
-    imports: [HeaderComponent, CommonModule],
-    templateUrl: './view-details.component.html',
-    styleUrl: './view-details.component.css'
+  selector: 'app-view-details',
+  imports: [HeaderComponent, CommonModule, RouterModule, AdminSidebarComponent],
+  templateUrl: './view-details.component.html',
+  styleUrl: './view-details.component.css',
 })
-export class ViewDetailsComponent implements OnInit {
+export class ViewDetailsComponent implements OnInit, OnDestroy {
   orderDetails: IOrder | null = null;
   transactions: ITransaction[] = [];
+  private susbcription = new Subscription();
   constructor(
     private route: ActivatedRoute,
     private orderService: OrderService
@@ -27,12 +30,19 @@ export class ViewDetailsComponent implements OnInit {
     }
   }
   getOrderDetails(orderId: string): void {
-    this.orderService.getOrderById(orderId).subscribe((res) => {
-      if (res.order) {
-        this.orderDetails = res.order;
-      }
-      console.log(this.orderDetails);
-      this.transactions = res.transactions;
-    });
+    const OrderSubscription = this.orderService
+      .getOrderById(orderId)
+      .subscribe((res: any) => {
+        console.log(res);
+        if (res.data.order) {
+          this.orderDetails = res.data.order;
+        }
+        console.log(this.orderDetails);
+        this.transactions = res.transactions;
+      });
+    this.susbcription.add(OrderSubscription);
+  }
+  ngOnDestroy(): void {
+    this.susbcription.unsubscribe();
   }
 }

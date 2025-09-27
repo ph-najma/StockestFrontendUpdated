@@ -1,0 +1,10 @@
+<div
+  *ngIf="alertMessage$ | async as alertMessage"
+  class="alert-modal-overlay"
+  (click)="closeModal()"
+>
+  <div class="alert-modal">
+    <p>{{ alertMessage }}</p>
+    <button (click)="closeModal()">OK</button>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -9,19 +9,25 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
-
+import { RightsideLoginComponent } from '../../rightside-login/rightside-login.component';
+import { Subscription } from 'rxjs';
 @Component({
-    selector: 'app-sign-up',
-    imports: [ReactiveFormsModule, RouterModule, CommonModule],
-    templateUrl: './sign-up.component.html',
-    styleUrls: ['./sign-up.component.css']
+  selector: 'app-sign-up',
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    CommonModule,
+    RightsideLoginComponent,
+  ],
+  templateUrl: './sign-up.component.html',
+  styleUrls: ['./sign-up.component.css'],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnDestroy {
   signUpForm: FormGroup;
   loading: boolean = false;
   error: string | null = null;
   successMessage: string | null = null;
-
+  private subsription = new Subscription();
   constructor(private apiService: ApiService, private router: Router) {
     // Initialize the form group
     this.signUpForm = new FormGroup({
@@ -32,6 +38,7 @@ export class SignUpComponent {
         Validators.minLength(6),
       ]),
       confirmPassword: new FormControl('', [Validators.required]),
+      role: new FormControl('', [Validators.required]),
     });
   }
 
@@ -56,9 +63,10 @@ export class SignUpComponent {
       name: this.signUpForm.value.name,
       email: this.signUpForm.value.email,
       password: this.signUpForm.value.password,
+      role: this.signUpForm.value.role,
     };
 
-    this.apiService.signup(userData).subscribe(
+    const signupSubscription = this.apiService.signup(userData).subscribe(
       (response) => {
         this.loading = false;
         this.successMessage = 'Please check your email for the OTP!';
@@ -73,6 +81,7 @@ export class SignUpComponent {
         this.error = 'Something went wrong. Please try again later.';
       }
     );
+    this.subsription.add(signupSubscription);
   }
 
   goToLogin() {
@@ -82,5 +91,8 @@ export class SignUpComponent {
   // Convenience getter for form controls
   get f() {
     return this.signUpForm.controls;
+  }
+  ngOnDestroy(): void {
+    this.subsription.unsubscribe();
   }
 }

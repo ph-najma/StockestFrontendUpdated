@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-header',
-    imports: [CommonModule],
-    templateUrl: './header.component.html',
-    styleUrl: './header.component.css'
+  selector: 'app-header',
+  imports: [CommonModule],
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.css',
 })
 export class HeaderComponent {
   dropdownOpen: boolean = false;
@@ -28,7 +28,7 @@ export class HeaderComponent {
   }
   constructor(private apiService: ApiService, private router: Router) {}
   logout() {
-    this.apiService.logout(); // Call the logout method from ApiService
-    this.router.navigate(['/adminLogin']); // Redirect to the login page after logout
+    this.apiService.logout();
+    this.router.navigate(['/adminLogin']);
   }
 }

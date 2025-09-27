@@ -1,0 +1,41 @@
+/* Custom CSS for Toggle */
+input.toggle {
+  width: 40px;
+  height: 20px;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+}
+
+input.toggle:checked {
+  background-color: #3b82f6;
+}
+
+input.toggle:checked::before {
+  transform: translateX(20px);
+}
+
+input.toggle::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 9999px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  outline: none;
+}
+
+.input:focus {
+  border-color: #3b82f6;
+}

@@ -1,0 +1,97 @@
+<app-user-header></app-user-header>
+<div
+  class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-8"
+>
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-full max-w-7xl p-8 space-y-10 border border-gray-200"
+  >
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div *ngIf="roomCode" class="text-base text-gray-600">
+        Room Code:
+        <span class="font-semibold text-indigo-600">{{ roomCode }}</span>
+      </div>
+    </div>
+
+    <!-- Video Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="relative group">
+        <video
+          #localVideo
+          autoplay
+          muted
+          class="rounded-xl w-full h-80 object-cover border border-gray-300 shadow-md transition group-hover:scale-[1.02] cursor-pointer"
+          (dblclick)="toggleFullScreen('local')"
+        ></video>
+        <span
+          class="absolute bottom-3 left-3 bg-black/60 text-white text-sm px-4 py-1 rounded-full"
+        >
+          You
+        </span>
+      </div>
+
+      <div class="relative group">
+        <video
+          #remoteVideo
+          autoplay
+          class="rounded-xl w-full h-80 object-cover border border-gray-300 shadow-md transition group-hover:scale-[1.02] cursor-pointer"
+          (dblclick)="toggleFullScreen('remote')"
+        ></video>
+        <span
+          class="absolute bottom-3 left-3 bg-black/60 text-white text-sm px-4 py-1 rounded-full"
+        >
+          Participant
+        </span>
+      </div>
+    </div>
+
+    <!-- Controls Section -->
+    <div
+      class="border-t pt-6 border-gray-200 flex flex-wrap justify-center gap-4"
+    >
+      <button
+        (click)="createRoom()"
+        class="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition"
+      >
+        📡 <span>Create Room</span>
+      </button>
+
+      <input
+        [(ngModel)]="joinCode"
+        placeholder="Enter Room Code"
+        class="px-5 py-2.5 w-60 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-400 text-gray-700"
+      />
+
+      <button
+        (click)="joinRoom()"
+        class="flex items-center gap-2 px-6 py-3 bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600 transition"
+      >
+        🔗 <span>Join Room</span>
+      </button>
+
+      <button
+        (click)="endCall()"
+        class="flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition"
+      >
+        🔚 <span>End Call</span>
+      </button>
+    </div>
+
+    <!-- Mic/Camera Toggles -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <button
+        (click)="toggleMic()"
+        class="flex items-center gap-2 px-5 py-2.5 bg-gray-700 text-white rounded-full shadow-md hover:bg-gray-800 transition"
+      >
+        {{ isMicOn ? "🔇 Mute Mic" : "🎤 Unmute Mic" }}
+      </button>
+
+      <button
+        (click)="toggleCamera()"
+        class="flex items-center gap-2 px-5 py-2.5 bg-gray-700 text-white rounded-full shadow-md hover:bg-gray-800 transition"
+      >
+        {{ isCameraOn ? "📷 Turn Off Cam" : "📷 Turn On Cam" }}
+      </button>
+    </div>
+  </div>
+</div>

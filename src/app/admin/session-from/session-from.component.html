@@ -1,0 +1,113 @@
+<!-- session-form.component.html -->
+<form [formGroup]="form" (submit)="handleSubmit()" class="space-y-6">
+  <!-- Instructor Details Section -->
+  <div class="space-y-4">
+    <h3 class="text-lg font-medium">Instructor Information</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label for="instructor_name" class="block text-sm font-medium">
+          Instructor Name *
+        </label>
+        <input
+          id="instructor_name"
+          formControlName="instructor_name"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+          placeholder="Enter instructor name"
+        />
+      </div>
+      <div class="space-y-2">
+        <label for="instructor_email" class="block text-sm font-medium">
+          Instructor Email *
+        </label>
+        <input
+          id="instructor_email"
+          formControlName="instructor_email"
+          type="email"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+          placeholder="Enter instructor email"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Details Section -->
+  <div class="space-y-4">
+    <h3 class="text-lg font-medium">Session Details</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label for="specialization" class="block text-sm font-medium">
+          Specialization
+        </label>
+        <select
+          id="specialization"
+          formControlName="specialization"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+        >
+          <option value="" disabled>Select specialization</option>
+          <option value="technical">Technical Analysis</option>
+          <option value="fundamental">Fundamental Analysis</option>
+          <option value="risk">Risk Management</option>
+          <option value="psychology">Trading Psychology</option>
+        </select>
+      </div>
+      <div class="space-y-2">
+        <label for="hourly_rate" class="block text-sm font-medium">
+          Hourly Rate ($) *
+        </label>
+        <input
+          id="hourly_rate"
+          formControlName="hourly_rate"
+          type="number"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+          placeholder="Enter hourly rate"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Selection Section -->
+  <div class="space-y-4">
+    <h3 class="text-lg font-medium">Session Schedule</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label for="start_time" class="block text-sm font-medium">
+          Start Time *
+        </label>
+        <input
+          id="start_time"
+          formControlName="start_time"
+          type="datetime-local"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+        />
+      </div>
+      <div class="space-y-2">
+        <label for="end_time" class="block text-sm font-medium">
+          End Time *
+        </label>
+        <input
+          id="end_time"
+          formControlName="end_time"
+          type="datetime-local"
+          class="block w-full border-gray-300 rounded-md shadow-sm"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-4">
+    <button
+      type="button"
+      class="px-4 py-2 border border-gray-300 rounded-md"
+      (click)="form.reset()"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-600 text-white rounded-md"
+      [disabled]="form.invalid"
+    >
+      {{ mode === "create" ? "Create Session" : "Update Session" }}
+    </button>
+  </div>
+</form>

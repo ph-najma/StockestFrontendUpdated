@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { HeaderComponent } from '../header/header.component';
+import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component';
+import { response } from 'express';
+import { DatePipe, DecimalPipe } from '@angular/common';
 interface ILimit {
   maxBuyLimit: number;
   maxSellLimit: number;
@@ -9,16 +14,24 @@ interface ILimit {
 }
 @Component({
   selector: 'app-limit-admin',
-  imports: [FormsModule, HeaderComponent],
+  imports: [
+    FormsModule,
+    HeaderComponent,
+    RouterModule,
+    AdminSidebarComponent,
+
+    DecimalPipe,
+  ],
   templateUrl: './limit-admin.component.html',
   styleUrl: './limit-admin.component.css',
 })
-export class LimitAdminComponent implements OnInit {
+export class LimitAdminComponent implements OnInit, OnDestroy {
   limit: ILimit = {
     maxBuyLimit: 1000,
     maxSellLimit: 500,
     timeframeInHours: 24,
   };
+  private subscription = new Subscription();
   ngOnInit(): void {
     this.fetchLimits();
   }
@@ -38,16 +51,16 @@ export class LimitAdminComponent implements OnInit {
   }
 
   fetchLimits(): void {
-    this.apiService.getLimits().subscribe({
-      next: (data: ILimit) => {
-        this.limit = data; // Update the component state with the fetched data
-        console.log('Fetched limits:', data); // Debug log
+    const limitSubscription = this.apiService.getLimits().subscribe({
+      next: (response) => {
+        this.limit = response.data;
       },
       error: (err) => {
-        console.error('Failed to fetch limits:', err); // Handle error
+        console.error('Failed to fetch limits:', err);
         this.saveStatus = 'error';
       },
     });
+    this.subscription.add(limitSubscription);
   }
 
   handleInputChange(event: Event): void {
@@ -69,17 +82,23 @@ export class LimitAdminComponent implements OnInit {
       return;
     }
 
-    this.apiService.saveLimits(this.limit).subscribe({
-      next: () => {
-        this.saveStatus = 'success';
-        this.isChanged = false;
-        this.isDialogOpen = true;
-        this.fetchLimits();
-      },
-      error: () => {
-        this.saveStatus = 'error';
-        this.isDialogOpen = true;
-      },
-    });
+    const newLimitSubscription = this.apiService
+      .saveLimits(this.limit)
+      .subscribe({
+        next: (response) => {
+          this.limit = response.data;
+          this.saveStatus = 'success';
+          this.isChanged = false;
+          this.isDialogOpen = true;
+        },
+        error: () => {
+          this.saveStatus = 'error';
+          this.isDialogOpen = true;
+        },
+      });
+    this.subscription.add(newLimitSubscription);
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, ObservedValueOf, tap, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import {
@@ -9,6 +9,9 @@ import {
   GoogleLoginResponse,
   LoginData,
 } from '../interfaces/userInterface';
+import { ResponseModel } from '../interfaces/userInterface';
+import { environment } from '../../environments/environment';
+import { response } from 'express';
 
 export interface User {
   _id: string;
@@ -39,13 +42,14 @@ export interface Company {
   description?: string;
 }
 export interface Stock {
+  id?: string;
   symbol: string;
   open?: number;
   change: number;
   price: number;
   volume: number;
   changePercent: number;
-  company?: Company; // Optional field if it can be empty
+  company?: Company;
 }
 export interface PortfolioItem {
   stock: Stock;
@@ -65,11 +69,19 @@ export interface PortfolioResponse {
   todaysProfit: number;
 }
 
+export interface IWatchlist {
+  user: User | null;
+  stocks: { stockId: Stock; addedAt: Date }[];
+  name: string;
+  createdAt: Date;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:5000';
+  private apiUrl = environment.apiUrl;
+  private userCache: { [page: number]: any } = {};
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -77,15 +89,15 @@ export class ApiService {
     const token = sessionStorage.getItem('token');
     console.log(token);
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+      Authorization: `Bearer ${token}`,
     });
   }
   signup(userData: {
     name: string;
     email: string;
     password: string;
+    role: string;
   }): Observable<any> {
-    console.log('hello from signup');
     return this.http.post(`${this.apiUrl}/signup`, userData);
   }
 
@@ -94,28 +106,34 @@ export class ApiService {
   }
 
   resendOtp(data: any): Observable<any> {
-    console.log(data);
     return this.http.post(`${this.apiUrl}/resendOtp`, data);
   }
 
   login(data: LoginData): Observable<LoginResponse> {
-    console.log('hello from login service');
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data);
   }
   forgotPassword(data: any): Observable<any> {
-    console.log('hello from forgot pass service');
     return this.http.post(`${this.apiUrl}/forgotPassword`, data);
   }
   resetPassword(data: any): Observable<any> {
-    console.log('hello from reset password from rset password');
-    console.log(data);
-    console.log(data.email);
     return this.http.post(`${this.apiUrl}/resetPassword`, data);
   }
-  userList(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/userlist`, {
-      headers: this.getAuthHeaders(),
-    });
+
+  userList(page: number, limit: number): Observable<any> {
+    if (this.userCache[page]) {
+      console.log(`Returning cached data for page ${page}`);
+      return of(this.userCache[page]); // Return cached data as an observable
+    }
+    return this.http
+      .get<any>(`${this.apiUrl}/userlist?page=${page}&limit=${limit}`, {
+        headers: this.getAuthHeaders(),
+      })
+      .pipe(
+        tap((response) => {
+          console.log(`Caching data for page ${page}`);
+          this.userCache[page] = response;
+        })
+      );
   }
   loginAdmin(data: AdminLoginData): Observable<LoginResponse> {
     return this.http
@@ -136,24 +154,21 @@ export class ApiService {
     );
   }
   googleLogin(id_token: string): Observable<GoogleLoginResponse> {
-    console.log('hello from google services');
     return this.http.post<GoogleLoginResponse>(
       `${this.apiUrl}/auth/google/login`,
       { id_token }
     );
   }
   getHomeData(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/home`);
+    return this.http.get(`${this.apiUrl}/adminHome`);
   }
   getUserProfile(): Observable<any> {
-    console.log('hello from service');
     return this.http.get(`${this.apiUrl}/Userprofile`, {
       headers: this.getAuthHeaders(),
     });
   }
-  getStocks(): Observable<any[]> {
-    console.log('hello from service');
-    return this.http.get<any[]>(`${this.apiUrl}/stocks`, {
+  getStocks(): Observable<ResponseModel<Stock[]>> {
+    return this.http.get<ResponseModel<Stock[]>>(`${this.apiUrl}/stocks`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -164,21 +179,17 @@ export class ApiService {
     );
   }
   addCompany(data: Company): Observable<Company> {
-    console.log(data);
     return this.http.post<Company>(`${this.apiUrl}/addCompany`, data);
   }
   addStock(data: Stock): Observable<Stock> {
-    console.log(data, 'from service');
     return this.http.post<Stock>(`${this.apiUrl}/addStock`, data);
   }
-  getPortfolio(): Observable<PortfolioResponse> {
-    console.log('hello from service');
-    return this.http.get<PortfolioResponse>(`${this.apiUrl}/portfolio`, {
+  getPortfolio(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/portfolio`, {
       headers: this.getAuthHeaders(),
     });
   }
   getTransactions(): Observable<any[]> {
-    console.log('hello from t serice');
     return this.http.get<any[]>(`${this.apiUrl}/transactions`, {
       headers: this.getAuthHeaders(),
     });
@@ -202,7 +213,6 @@ export class ApiService {
     });
   }
   getLimits(): Observable<any> {
-    console.log('hello from sefice');
     return this.http.get<any>(`${this.apiUrl}/limit`, {
       headers: this.getAuthHeaders(),
     });
@@ -213,11 +223,140 @@ export class ApiService {
     });
   }
 
+  createPomotions(promotionData: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/createPromotions`,
+      promotionData
+    );
+  }
+  addToWatchlist(data: IWatchlist): Observable<any> {
+    return this.http.post<IWatchlist>(
+      `${this.apiUrl}/ensureAndAddStock`,
+      data,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+  getWatchlist(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getWatchlist`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  createOrder(amount: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/create-order`,
+      { amount },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+  verifyPayment(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/verify-payment`, payload, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getPromotions(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/promotions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getTradeDiary(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/tradeDiary`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getPurchasedCourses(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getPurchased`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getAssignedCourses(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getAssigned`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  createSession(data: any) {
+    return this.http.post(`${this.apiUrl}/createSession`, data, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getSession() {
+    return this.http.get(`${this.apiUrl}/getSessions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getSessionById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getSessionById/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  updateSession(sessionId: string, data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/updateSession/${sessionId}`, data, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  cancelSession(id: string, newStatus: any): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/cancelSession/${id}`,
+      { status: newStatus },
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+  }
+  getActiveSessions(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/activeSessions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getUserId(): string | null {
+    const token = sessionStorage.getItem('token'); // or localStorage, depending on where you store it
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token); // Decode the token
+        return decodedToken?.userId || null; // Adjust the key based on your token structure
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+  searchStocks(query: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (query) {
+      params = params.append('q', query);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/search`, {
+      params: params,
+      headers: this.getAuthHeaders(),
+    });
+  }
+  generatePrompt(prompt: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/generate`, { prompt });
+  }
   logout() {
     localStorage.removeItem('token');
     alert(
       'You have been logged out. Please contact support if you believe this is a mistake.'
     );
     this.router.navigate(['/login']);
+  }
+  getInitialData() {
+    return Promise.all([
+      this.getStocks().toPromise(),
+      this.getUserProfile().toPromise(),
+    ]).then(([stocksResponse, userResponse]) => ({
+      stocks: stocksResponse?.data || [],
+      user: userResponse?.data || null,
+      portfolio: userResponse?.data.portfolio || [],
+      balance: userResponse?.data.balance || 0,
+    }));
+  }
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<any>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      tap((response) => {
+        sessionStorage.setItem('token', response.accessToken);
+      })
+    );
   }
 }

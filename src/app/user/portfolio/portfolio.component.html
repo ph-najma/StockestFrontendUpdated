@@ -1,100 +1,428 @@
 <app-user-header></app-user-header>
 
-<!-- Portfolio Content -->
-<section class="bg-gray-800 text-gray-300 min-h-screen p-6">
-  <!-- Stocks Summary -->
-  <div class="bg-gray-900 p-6 rounded-lg shadow-md mb-6">
-    <h2 class="text-xl font-bold text-white mb-4">Stocks</h2>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div>
-        <p class="text-sm text-gray-400">Portfolio Value</p>
-        <p class="text-white text-lg font-semibold">
-          ₹ {{ summary.totalPortfolioValue | number : "1.2-2" }}
-        </p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-400">Current Value</p>
-        <p class="text-white text-lg font-semibold">₹ 14,646.65</p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-400">Overall Profit</p>
-        <p
-          [ngClass]="{
-            'text-green-400': summary.overallProfit >= 0,
-            'text-red-400': summary.overallProfit < 0
-          }"
-          class="text-lg font-semibold"
-        >
-          ₹ {{ summary.overallProfit | number : "1.2-2" }}
-        </p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-400">Today's Profit</p>
-        <p
-          [ngClass]="{
-            'text-green-400': summary.todaysProfit >= 0,
-            'text-red-400': summary.todaysProfit < 0
-          }"
-          class="text-lg font-semibold"
-        >
-          ₹ {{ summary.todaysProfit | number : "1.2-2" }}
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stocks Table -->
-  <div class="bg-gray-900 p-6 rounded-lg shadow-md">
-    <div class="flex justify-between mb-4">
-      <h3 class="text-white font-semibold text-lg">Overall Stocks</h3>
-      <div>
-        <input
-          type="text"
-          placeholder="Search"
-          class="bg-gray-800 text-gray-300 px-4 py-2 rounded focus:outline-none"
-        />
+<div class="min-h-screen bg-slate-50">
+  <!-- Main Container -->
+  <div class="flex-1 min-h-screen">
+    <!-- Header Section -->
+    <div class="bg-white border-b border-slate-200 shadow-sm">
+      <div class="px-8 py-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-semibold text-slate-900">My Portfolio</h1>
+            <p class="text-sm text-slate-600 mt-1">
+              Track your stock investments and performance
+            </p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-right">
+              <p class="text-sm text-slate-600">Market Status</p>
+              <div class="flex items-center space-x-2">
+                <div
+                  class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                ></div>
+                <span class="text-sm font-medium text-green-600">Live</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <table class="w-full text-left">
-      <thead>
-        <tr class="text-gray-400 border-b border-gray-700">
-          <th class="py-2 px-4">Stock</th>
-          <th class="py-2 px-4">Avg Price</th>
-          <th class="py-2 px-4">Qty</th>
-          <th class="py-2 px-4">Current Value</th>
-          <th class="py-2 px-4">Overall Profit</th>
-          <th class="py-2 px-4">Today</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Example Row -->
-        <tr
-          *ngFor="let item of portfolio"
-          class="hover:bg-gray-800 border-b border-gray-700"
-        >
-          <td class="py-2 px-4">
-            {{ item.stock.symbol }}
-          </td>
-          <td class="py-2 px-4">₹ {{ item.stock.price | number : "1.2-2" }}</td>
-          <td class="py-2 px-4">{{ item.quantity }}</td>
-          <td class="py-2 px-4">
-            ₹ {{ item.currentValue | number : "1.2-2" }}
-          </td>
-          <td
-            class="py-2 px-4"
+    <!-- Portfolio Summary Section -->
+    <div class="px-8 py-6">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-slate-900">Stocks Summary</h2>
+          <div class="flex items-center space-x-2 text-sm text-slate-600">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <span>Last updated: just now</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div
+            class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-blue-700">Portfolio Value</p>
+                <p class="text-2xl font-bold text-blue-900 mt-1">
+                  ₹{{ summary.totalPortfolioValue | number : "1.2-2" }}
+                </p>
+              </div>
+              <div
+                class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 border border-indigo-200"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-indigo-700">Current Value</p>
+                <p class="text-2xl font-bold text-indigo-900 mt-1">
+                  ₹14,646.65
+                </p>
+              </div>
+              <div
+                class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="rounded-lg p-4 border"
             [ngClass]="{
-              'text-green-400': item?.overallProfit ?? 0 >= 0,
-              'text-red-400': item?.overallProfit ?? 0 < 0
+              'bg-gradient-to-br from-green-50 to-green-100 border-green-200':
+                summary.overallProfit >= 0,
+              'bg-gradient-to-br from-red-50 to-red-100 border-red-200':
+                summary.overallProfit < 0
             }"
           >
-            ₹ {{ item.overallProfit ?? 0 | number : "1.2-2" }}
-          </td>
-          <td class="py-2 px-4 text-green-400">
-            {{ item.todaysProfit ?? 0 | number : "1.2-2" }}%
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="flex items-center justify-between">
+              <div>
+                <p
+                  class="text-sm font-medium"
+                  [ngClass]="{
+                    'text-green-700': summary.overallProfit >= 0,
+                    'text-red-700': summary.overallProfit < 0
+                  }"
+                >
+                  Overall Profit
+                </p>
+                <p
+                  class="text-2xl font-bold mt-1"
+                  [ngClass]="{
+                    'text-green-900': summary.overallProfit >= 0,
+                    'text-red-900': summary.overallProfit < 0
+                  }"
+                >
+                  ₹{{ summary.overallProfit | number : "1.2-2" }}
+                </p>
+              </div>
+              <div
+                class="w-10 h-10 rounded-lg flex items-center justify-center"
+                [ngClass]="{
+                  'bg-green-600': summary.overallProfit >= 0,
+                  'bg-red-600': summary.overallProfit < 0
+                }"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    *ngIf="summary.overallProfit >= 0"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  ></path>
+                  <path
+                    *ngIf="summary.overallProfit < 0"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="rounded-lg p-4 border"
+            [ngClass]="{
+              'bg-gradient-to-br from-green-50 to-green-100 border-green-200':
+                summary.todaysProfit >= 0,
+              'bg-gradient-to-br from-red-50 to-red-100 border-red-200':
+                summary.todaysProfit < 0
+            }"
+          >
+            <div class="flex items-center justify-between">
+              <div>
+                <p
+                  class="text-sm font-medium"
+                  [ngClass]="{
+                    'text-green-700': summary.todaysProfit >= 0,
+                    'text-red-700': summary.todaysProfit < 0
+                  }"
+                >
+                  Today's Profit
+                </p>
+                <p
+                  class="text-2xl font-bold mt-1"
+                  [ngClass]="{
+                    'text-green-900': summary.todaysProfit >= 0,
+                    'text-red-900': summary.todaysProfit < 0
+                  }"
+                >
+                  ₹{{ summary.todaysProfit | number : "1.2-2" }}
+                </p>
+              </div>
+              <div
+                class="w-10 h-10 rounded-lg flex items-center justify-center"
+                [ngClass]="{
+                  'bg-green-600': summary.todaysProfit >= 0,
+                  'bg-red-600': summary.todaysProfit < 0
+                }"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stocks Table Section -->
+    <div class="px-8">
+      <div
+        class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Overall Stocks</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Your current stock holdings
+            </p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Search stocks..."
+                class="bg-slate-50 border border-slate-300 text-slate-900 px-4 py-2 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <svg
+                class="w-4 h-4 text-slate-400 absolute left-3 top-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-slate-200">
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Stock
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Avg Price
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Qty
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Current Value
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Overall Profit
+                </th>
+                <th class="text-left py-3 px-4 font-semibold text-slate-700">
+                  Today
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let item of portfolio"
+                class="border-b border-slate-100 hover:bg-slate-50 transition-colors duration-150"
+              >
+                <td class="py-4 px-4">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"
+                    >
+                      <span class="text-blue-600 font-semibold text-sm">
+                        {{ item.stock.symbol.charAt(0) }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-slate-900">
+                        {{ item.stock.symbol }}
+                      </p>
+                      <p class="text-sm text-slate-500">
+                        {{ item.stock.symbol || "Stock Name" }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <span class="text-slate-900 font-medium">
+                    ₹{{ item.stock.price | number : "1.2-2" }}
+                  </span>
+                </td>
+                <td class="py-4 px-4">
+                  <span class="text-slate-900 font-medium">{{
+                    item.quantity
+                  }}</span>
+                </td>
+                <td class="py-4 px-4">
+                  <span class="text-slate-900 font-semibold">
+                    ₹{{ item.currentValue | number : "1.2-2" }}
+                  </span>
+                </td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center space-x-2">
+                    <span
+                      class="font-semibold"
+                      [ngClass]="{
+                        'text-green-600': item?.overallProfit ?? 0 >= 0,
+                        'text-red-600': item?.overallProfit ?? 0 < 0
+                      }"
+                    >
+                      ₹{{ item.overallProfit ?? 0 | number : "1.2-2" }}
+                    </span>
+                    <div
+                      class="w-4 h-4 rounded-full flex items-center justify-center"
+                      [ngClass]="{
+                        'bg-green-100': item?.overallProfit ?? 0 >= 0,
+                        'bg-red-100': item?.overallProfit ?? 0 < 0
+                      }"
+                    >
+                      <svg
+                        class="w-2 h-2"
+                        [ngClass]="{
+                          'text-green-600': item?.overallProfit ?? 0 >= 0,
+                          'text-red-600': item?.overallProfit ?? 0 < 0
+                        }"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          *ngIf="item?.overallProfit ?? 0 >= 0"
+                          d="M7 14l5-5 5 5z"
+                        />
+                        <path
+                          *ngIf="item?.overallProfit ?? 0 < 0"
+                          d="M7 10l5 5 5-5z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-4 px-4">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800':
+                        item.todaysProfit ?? 0 >= 0,
+                      'bg-red-100 text-red-800': item.todaysProfit ?? 0 < 0
+                    }"
+                  >
+                    {{ item.todaysProfit ?? 0 | number : "1.2-2" }}%
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State (if no portfolio items) -->
+        <div
+          *ngIf="!portfolio || portfolio.length === 0"
+          class="text-center py-12"
+        >
+          <div
+            class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <svg
+              class="w-8 h-8 text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 mb-2">
+            No stocks yet
+          </h3>
+          <p class="text-slate-600 mb-4">
+            Start building your portfolio by investing in stocks
+          </p>
+          <button
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+          >
+            Start Investing
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
+</div>

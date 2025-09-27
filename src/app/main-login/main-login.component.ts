@@ -15,24 +15,25 @@ import {
 } from '../interfaces/userInterface';
 
 @Component({
-    selector: 'app-main-login',
-    imports: [
-        CommonModule,
-        RouterModule,
-        NgIf,
-        ReactiveFormsModule,
-        GoogleSigninComponent,
-    ],
-    templateUrl: './main-login.component.html',
-    styleUrl: './main-login.component.css'
+  selector: 'app-main-login',
+  imports: [
+    CommonModule,
+    RouterModule,
+    NgIf,
+    ReactiveFormsModule,
+    GoogleSigninComponent,
+  ],
+  templateUrl: './main-login.component.html',
+  styleUrl: './main-login.component.css',
 })
 export class MainLoginComponent {
-  @Input() title: string = 'Login'; // Customizable form title
-  @Input() error: string | null = null; // Error message
-  @Input() successMessage: string | null = null; // Success message
-  @Input() loading: boolean = false; // Loading state
+  @Input() title: string = 'Login';
+  @Input() error: string | null = null;
+  @Input() successMessage: string | null = null;
+  @Input() loading: boolean = false;
   @Output() submitForm = new EventEmitter<any>();
-  @Input() isUserLogin: boolean = false; // Event for form submission
+  @Input() isUserLogin: boolean = false;
+  @Input() isInstructorLogin: boolean = false;
 
   loginForm: FormGroup;
 

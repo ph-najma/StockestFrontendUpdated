@@ -1,0 +1,30 @@
+<app-header class="fixed top-0 left-0 w-full z-50"></app-header>
+<div class="flex h-screen overflow-hidden bg-slate-50">
+  <!-- Sidebar -->
+  <app-admin-sidebar class="mt-20"></app-admin-sidebar>
+  <!-- <main
+    class="flex-1 overflow-y-auto p-8 bg-gradient-to-br from-slate-50 to-blue-50 mt-20"
+  > -->
+  <!-- Main Content Area -->
+  <div
+    class="flex-1 overflow-y-auto p-8 bg-gradient-to-br from-slate-50 to-blue-50 mt-20"
+  >
+    <div class="max-w-2xl mx-auto bg-blue-50 shadow rounded-lg">
+      <!-- Header Section -->
+      <div class="border-b px-6 py-4 flex items-center space-x-2">
+        <i class="fa fa-calendar text-blue-600"></i>
+        <h3 class="text-lg font-medium text-blue-600">
+          Create New Learning Session
+        </h3>
+      </div>
+
+      <!-- Form Section -->
+      <div class="p-6">
+        <app-session-from
+          [mode]="'create'"
+          (formSubmit)="handleCreate($event)"
+        ></app-session-from>
+      </div>
+    </div>
+  </div>
+</div>

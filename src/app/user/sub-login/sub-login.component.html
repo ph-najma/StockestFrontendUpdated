@@ -1,23 +1,33 @@
 <div class="flex min-h-screen bg-gray-100">
-  <div class="flex items-center justify-center w-1/2 bg-green-100 p-10">
-    <div class="text-center">
-      <img
-        src="../../assets/logo.png"
-        alt="GainNest Logo"
-        class="h-24 w-24 mb-4 mx-auto"
-      />
-      <h1 class="text-3xl font-bold text-green-600">GainNest</h1>
-      <p class="mt-2 text-gray-700">Grow with Confidence</p>
+  <app-rightside-login class="w-1/2"></app-rightside-login>
+  <div
+    class="flex items-center justify-center w-1/2 p-10 bg-gradient-to-t from-white via-gray-50 to-gray-100"
+  >
+    <div class="w-full max-w-md p-8 bg-white shadow-2xl rounded-3xl relative">
+      <div class="absolute -top-8 left-1/2 transform -translate-x-1/2">
+        <img
+          src="../../assets/logo.png"
+          alt="GainNest Logo"
+          class="h-16 w-16 rounded-full border-4 border-green-400 shadow-lg"
+        />
+      </div>
+      <h2 class="text-3xl font-bold mb-6 text-center text-green-800">
+        Welcome Back
+      </h2>
+      <h2 class="text-xl font-bold mb-6 text-center text-green-800">
+        User Login
+      </h2>
+      <p class="text-sm text-gray-600 text-center mb-4">
+        Login to continue growing with confidence
+      </p>
+      <app-main-login
+        [title]="'User Login'"
+        [loading]="loading"
+        [error]="error"
+        [successMessage]="successMessage"
+        [isUserLogin]="true"
+        (submitForm)="onSubmit($event)"
+      ></app-main-login>
     </div>
-  </div>
-  <div class="flex items-center justify-center w-1/2 p-10 bg-green-50">
-    <app-main-login
-      [title]="'User Login'"
-      [loading]="loading"
-      [error]="error"
-      [successMessage]="successMessage"
-      [isUserLogin]="true"
-      (submitForm)="onSubmit($event)"
-    ></app-main-login>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 interface statistics {
   buyTransactions: number;
   sellTransactions: number;
@@ -11,14 +11,11 @@ interface statistics {
   templateUrl: './trans-statistics.component.html',
   styleUrl: './trans-statistics.component.css',
 })
-export class TransStatisticsComponent implements OnInit {
+export class TransStatisticsComponent {
   @Input() stats: statistics = {
     buyTransactions: 0,
     sellTransactions: 0,
     total: 0,
     totalVolume: 0,
   };
-  ngOnInit(): void {
-    console.log(this.stats);
-  }
 }

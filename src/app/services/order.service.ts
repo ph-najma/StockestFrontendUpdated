@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, Stock } from './api.service';
-
+import { OrderResponse } from '../interfaces/userInterface';
+import { environment } from '../../environments/environment';
+import { env } from 'process';
 export interface IOrder {
   _id: string;
   user: User;
@@ -15,6 +17,8 @@ export interface IOrder {
   status: 'PENDING' | 'COMPLETED' | 'FAILED';
   createdAt: Date;
   completedAt?: Date;
+  isIntraday?: boolean;
+  orderId?: string;
 }
 export interface ITransaction {
   _id: string;
@@ -39,14 +43,14 @@ export interface ITransaction {
   providedIn: 'root',
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:5000';
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('token');
     console.log(token);
     return new HttpHeaders({
-      Authorization: `Bearer ${token}`, // Set the token in the Authorization header
+      Authorization: `Bearer ${token}`,
     });
   }
 
@@ -54,6 +58,15 @@ export class OrderService {
     return this.http.get(`${this.apiUrl}/orders`, {
       headers: this.getAuthHeaders(),
     });
+  }
+  getOrderByUserId(page: number, limit: number): Observable<OrderResponse> {
+    console.log('service called');
+    return this.http.get<OrderResponse>(
+      `${this.apiUrl}/getOrders?page=${page}&limit=${limit}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
   getLimitOrders(filters: {
     status?: string;
@@ -113,8 +126,10 @@ export class OrderService {
   }
   cancelOrder(orderId: string): Observable<any> {
     console.log('hello from order service');
-    return this.http.post<any>(`${this.apiUrl}/changeStatus/${orderId}`, {
-      headers: this.getAuthHeaders(),
-    }); // Add an empty object as the body
+    return this.http.post<any>(
+      `${this.apiUrl}/changeStatus/${orderId}`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
   }
 }

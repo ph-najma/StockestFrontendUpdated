@@ -1,23 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service'; // Assuming this service handles API calls
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-reset-password',
-    imports: [FormsModule, RouterModule],
-    templateUrl: './reset-password.component.html',
-    styleUrls: ['./reset-password.component.css']
+  selector: 'app-reset-password',
+  imports: [FormsModule, RouterModule],
+  templateUrl: './reset-password.component.html',
+  styleUrls: ['./reset-password.component.css'],
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent implements OnInit, OnDestroy {
   otp: string = '';
   newPassword: string = '';
   loading: boolean = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
   email: string | null = '';
+  private subscription = new Subscription();
 
   constructor(
     private apiservice: ApiService,
@@ -34,7 +36,7 @@ export class ResetPasswordComponent implements OnInit {
     this.errorMessage = null;
 
     // Call the API to reset the password
-    this.apiservice
+    const resetPasswordSubscriptin = this.apiservice
       .resetPassword({
         email: this.email,
         otp: this.otp,
@@ -52,5 +54,9 @@ export class ResetPasswordComponent implements OnInit {
           this.errorMessage = 'Invalid OTP or password reset failed';
         }
       );
+    this.subscription.add(resetPasswordSubscriptin);
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

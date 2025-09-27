@@ -1,37 +1,39 @@
-<!-- Search Box -->
-<div class="mb-4">
-  <input
-    type="text"
-    placeholder="Search for companies to invest or trade"
-    class="w-full p-3 bg-gray-700 text-white rounded-md focus:outline-none"
-  />
-</div>
+<div class="w-64 bg-gray-800 p-4 h-screen rounded-lg">
+  <div class="relative">
+    <div class="relative flex items-center">
+      <i class="fas fa-search absolute left-3"></i>
 
-<!-- Features Section -->
-<div>
-  <h2 class="text-lg font-semibold mb-2">Invested</h2>
-  <!-- Stocks List -->
-  <ul>
-    <li class="p-4 bg-gray-700 mb-2 rounded flex justify-between items-center">
-      <div>
-        <p class="font-semibold">Yatharth Hospital</p>
-        <p class="text-sm text-gray-400">NSE &bull; 12 x 614.55</p>
-      </div>
-      <p class="text-red-500">670.60 ▼ -0.22%</p>
-    </li>
-    <li class="p-4 bg-gray-700 mb-2 rounded flex justify-between items-center">
-      <div>
-        <p class="font-semibold">CarTrade Tech</p>
-        <p class="text-sm text-gray-400">NSE &bull; 3 x 1,068.70</p>
-      </div>
-      <p class="text-green-500">1,179.45 ▲ 4.89%</p>
-    </li>
-    <li class="p-4 bg-gray-700 mb-2 rounded flex justify-between items-center">
-      <div>
-        <p class="font-semibold">India Shelter Finance</p>
-        <p class="text-sm text-gray-400">NSE &bull; 7 x 709.32</p>
-      </div>
-      <p class="text-green-500">704.45 ▲ 1.00%</p>
-    </li>
-  </ul>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+        placeholder="Search stocks..."
+        class="w-full bg-gray-900 text-white pl-10 pr-8 py-2 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+      />
+
+      <button
+        *ngIf="searchQuery"
+        (click)="handleClear()"
+        class="absolute right-2 text-gray-400 hover:text-gray-200"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Sample search results area -->
+  <div class="mt-4 space-y-2">
+    <div *ngIf="loading" class="text-sm text-gray-400">Loading...</div>
+    <div
+      *ngIf="!loading && suggestions.length === 0 && searchQuery"
+      class="text-sm text-gray-400"
+    >
+      No results found.
+    </div>
+    <div
+      *ngFor="let suggestion of suggestions"
+      class="text-sm text-white hover:bg-gray-700 p-2 rounded-lg cursor-pointer"
+      (click)="selectSuggestion(suggestion)"
+    >
+      {{ suggestion.name }} {{ suggestion.symbol }}
+    </div>
+  </div>
 </div>

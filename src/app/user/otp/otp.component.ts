@@ -4,12 +4,13 @@ import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-otp',
-    imports: [FormsModule, CommonModule],
-    templateUrl: './otp.component.html',
-    styleUrl: './otp.component.css'
+  selector: 'app-otp',
+  imports: [FormsModule, CommonModule],
+  templateUrl: './otp.component.html',
+  styleUrl: './otp.component.css',
 })
 export class OtpComponent implements OnInit, OnDestroy {
   otp: string = '';
@@ -17,9 +18,9 @@ export class OtpComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   email: string = '';
-  remainingTime: number = 300; // Set the OTP expiration time in seconds (5 minutes)
-  timer: any; // To hold the setInterval reference
-
+  remainingTime: number = 300;
+  timer: any;
+  private subscription = new Subscription();
   constructor(
     private apiService: ApiService,
     private router: Router,
@@ -31,15 +32,7 @@ export class OtpComponent implements OnInit, OnDestroy {
       this.email = params['email'];
     });
 
-    // Start the timer
     this.startTimer();
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup the timer when the component is destroyed
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
   }
 
   startTimer() {
@@ -49,37 +42,49 @@ export class OtpComponent implements OnInit, OnDestroy {
       } else {
         clearInterval(this.timer);
       }
-    }, 1000); // Update every second
+    }, 1000);
   }
 
   onSubmit() {
     this.loading = true;
-    this.apiService.verifyOtp({ otp: this.otp }).subscribe(
-      (response) => {
-        this.loading = false;
-        this.successMessage = 'OTP verified! You are successfully signed up.';
-        this.router.navigate(['/home']);
-      },
-      (error) => {
-        this.loading = false;
-        this.errorMessage = 'Invalid OTP. Please try again.';
-      }
-    );
+    const verifyOtpSubscription = this.apiService
+      .verifyOtp({ otp: this.otp })
+      .subscribe(
+        (response) => {
+          this.loading = false;
+          this.successMessage = 'OTP verified! You are successfully signed up.';
+          this.router.navigate(['/home']);
+        },
+        (error) => {
+          this.loading = false;
+          this.errorMessage = 'Invalid OTP. Please try again.';
+        }
+      );
+    this.subscription.add(verifyOtpSubscription);
   }
 
   resendOtp() {
     this.loading = true;
-    this.apiService.resendOtp({ email: this.email }).subscribe(
-      (response) => {
-        this.loading = false;
-        this.successMessage = 'New OTP sent to your email!';
-        this.remainingTime = 300; // Reset timer when OTP is resent
-        this.startTimer(); // Restart the timer
-      },
-      (error) => {
-        this.loading = false;
-        this.errorMessage = 'Failed to resend OTP. Please try again.';
-      }
-    );
+    const resendOTPSubscription = this.apiService
+      .resendOtp({ email: this.email })
+      .subscribe(
+        (response) => {
+          this.loading = false;
+          this.successMessage = 'New OTP sent to your email!';
+          this.remainingTime = 300;
+          this.startTimer();
+        },
+        (error) => {
+          this.loading = false;
+          this.errorMessage = 'Failed to resend OTP. Please try again.';
+        }
+      );
+    this.subscription.add(resendOTPSubscription);
+  }
+  ngOnDestroy(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.subscription.unsubscribe();
   }
 }

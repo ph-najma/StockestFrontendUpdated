@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TransStatisticsComponent } from '../trans-statistics/trans-statistics.component';
 import { TransTableComponent } from '../trans-table/trans-table.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { HeaderComponent } from '../header/header.component';
+import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component';
 
 export interface Transaction {
   id: string;
@@ -28,23 +31,37 @@ export interface Transaction {
     CommonModule,
     FormsModule,
     HeaderComponent,
+    RouterModule,
+    AdminSidebarComponent,
   ],
   templateUrl: './trans-main.component.html',
   styleUrl: './trans-main.component.css',
 })
-export class TransMainComponent implements OnInit {
+export class TransMainComponent implements OnInit, OnDestroy {
+  private subscription = new Subscription();
   constructor(private apiService: ApiService) {}
   transactions: Transaction[] = [];
   ngOnInit(): void {
     this.fetchTransactions();
   }
+  currentPage: number = 1;
+  totalUsers: number = 0;
+  totalPages: number = 1;
+  limit: number = 10;
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.fetchTransactions();
+    }
+  }
 
   fetchTransactions() {
-    this.apiService.getAllTrans().subscribe({
-      next: (data) => {
-        console.log(data);
+    const getTransactionSubscription = this.apiService.getAllTrans().subscribe({
+      next: (response: any) => {
+        console.log(response);
 
-        this.transactions = data.map((item) => ({
+        this.transactions = response.data.map((item: any) => ({
           id: item._id,
           user: item.user,
           buyer: { name: item.buyer?.name ?? 'N/A' },
@@ -64,6 +81,7 @@ export class TransMainComponent implements OnInit {
         console.error('Error fetching transactions', err);
       },
     });
+    this.subscription.add(getTransactionSubscription);
   }
 
   searchTerm: string = '';
@@ -71,7 +89,6 @@ export class TransMainComponent implements OnInit {
 
   get processedTransactions() {
     return this.transactions.filter((transaction) => {
-      console.log('transaction type', transaction.type);
       const matchesType =
         !this.filters.type || transaction.type === this.filters.type;
       const matchesStatus =
@@ -102,5 +119,8 @@ export class TransMainComponent implements OnInit {
         (t) => t.type?.trim().toLowerCase() === 'sell'
       ).length,
     };
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

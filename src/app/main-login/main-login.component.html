@@ -1,20 +1,13 @@
-<form
-  [formGroup]="loginForm"
-  (ngSubmit)="handleSubmit()"
-  class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg"
->
-  <h2 class="text-2xl font-semibold mb-6 text-gray-800">
-    {{ title }}
-  </h2>
-
+<form [formGroup]="loginForm" (ngSubmit)="handleSubmit()" class="space-y-4">
   <!-- Email Field -->
-  <div class="mb-4">
-    <label for="email" class="block text-gray-700">Email</label>
+  <div>
+    <label for="email" class="block text-gray-700 font-medium">Email</label>
     <input
       type="email"
       id="email"
       formControlName="email"
-      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none"
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-300 focus:outline-none"
+      placeholder="Enter your email"
     />
     <div
       *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
@@ -25,13 +18,16 @@
   </div>
 
   <!-- Password Field -->
-  <div class="mb-4">
-    <label for="password" class="block text-gray-700">Password</label>
+  <div>
+    <label for="password" class="block text-gray-700 font-medium"
+      >Password</label
+    >
     <input
       type="password"
       id="password"
       formControlName="password"
-      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none"
+      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-300 focus:outline-none"
+      placeholder="Enter your password"
     />
     <div
       *ngIf="
@@ -53,22 +49,34 @@
   <button
     type="submit"
     [disabled]="loading || loginForm.invalid"
-    class="w-full px-4 py-2 mt-4 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
+    class="w-full py-3 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
   >
     {{ loading ? "Loading..." : "Login" }}
   </button>
-  <div class="mt-4 text-center" *ngIf="isUserLogin">
-    <app-google-signin
-      (onGoogleLogin)="handleGoogleLogin($event)"
-    ></app-google-signin>
-  </div>
-  <p class="mt-4 text-center text-gray-600">
-    Don't have an account?
-    <a routerLink="/signup" class="text-indigo-600 hover:underline">Sign up</a>
-  </p>
-  <p class="mt-2 text-center text-gray-600">
-    <a routerLink="/forgotPassword" class="text-indigo-600 hover:underline">
-      Forgot Password?
-    </a>
-  </p>
 </form>
+
+<div *ngIf="isUserLogin" class="mt-4 text-center">
+  <app-google-signin
+    (onGoogleLogin)="handleGoogleLogin($event)"
+  ></app-google-signin>
+  <p class="mt-4 text-center text-gray-600">
+    Longin as Instructor?
+    <a
+      [routerLink]="['/instructorLogin']"
+      class="text-indigo-600 hover:underline"
+      >Instructor Login</a
+    >
+  </p>
+</div>
+
+<p class="mt-4 text-center text-gray-600">
+  Don't have an account?
+  <a [routerLink]="['/signup']" class="text-indigo-600 hover:underline"
+    >Sign up</a
+  >
+</p>
+<p class="mt-2 text-center text-gray-600">
+  <a [routerLink]="['/forgotPassword']" class="text-indigo-600 hover:underline">
+    Forgot Password?
+  </a>
+</p>

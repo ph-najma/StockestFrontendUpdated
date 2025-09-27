@@ -1,0 +1,110 @@
+<!-- add-money-page.component.html -->
+
+<div class="min-h-screen bg-black p-6">
+  <div class="max-w-md mx-auto">
+    <div class="w-full bg-gray-900 border border-gray-800 rounded-lg">
+      <div class="p-6">
+        <!-- Header -->
+        <h1 class="text-2xl font-bold text-white">Add Money</h1>
+        <p class="text-gray-400 mt-2">
+          Add funds to your trading account instantly using Razorpay
+        </p>
+      </div>
+
+      <!-- Card Content -->
+      <div class="p-6 space-y-6">
+        <!-- Amount Input -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-300">
+            Enter Amount (₹)
+          </label>
+          <div class="relative">
+            <span class="absolute left-3 top-2.5 h-5 w-5 text-gray-500">₹</span>
+            <input
+              type="number"
+              placeholder="Enter amount"
+              class="pl-10 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded w-full py-2"
+              [(ngModel)]="amount"
+            />
+          </div>
+        </div>
+
+        <!-- Quick Amount Buttons -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-300">Quick Add</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              *ngFor="let value of quickAmounts"
+              class="w-full border border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white rounded py-2"
+              (click)="handleQuickAmount(value)"
+            >
+              ₹{{ value }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-300"
+            >Payment Methods</label
+          >
+          <div class="border border-gray-700 rounded-lg p-4 space-y-2">
+            <div
+              class="flex items-center space-x-3 p-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700"
+            >
+              <svg
+                class="h-5 w-5 text-blue-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 10h11M9 21V3"
+                />
+              </svg>
+              <div>
+                <p class="font-medium text-gray-200">
+                  UPI / Cards / Net Banking
+                </p>
+                <p class="text-sm text-gray-500">Powered by Razorpay</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="p-6">
+        <button
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2 flex justify-center items-center"
+          (click)="handleProceed()"
+        >
+          <svg
+            class="mr-2 h-4 w-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add ₹{{ amount || "0" }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Security Note -->
+    <div class="mt-4 text-center text-sm text-gray-500">
+      <p>🔒 Secure payments powered by Razorpay</p>
+    </div>
+  </div>
+</div>

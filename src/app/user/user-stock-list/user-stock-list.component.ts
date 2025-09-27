@@ -1,25 +1,34 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { StockService } from '../../services/stock.service';
-import { ApiService } from '../../services/api.service';
+import { ApiService, IWatchlist, User } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { Order } from '../../services/stock.service';
 import { UserHeaderComponent } from '../user-header/user-header.component';
 import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../search/search.component';
 import { Stock } from '../../services/api.service';
-
+import { Router } from '@angular/router';
+import { WebSocketService } from '../../services/web-socket.service';
+import { Subscription, Subject } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+import { AlertService } from '../../services/alert.service';
+import { ResponseModel } from '../../interfaces/userInterface';
+import { takeUntil } from 'rxjs/operators';
 interface portfolio {
   quantity: number;
   stockId: Stock;
   _id: string;
+  isIntraday: Boolean;
 }
 @Component({
   selector: 'app-user-stock-list',
-  imports: [CommonModule, UserHeaderComponent, FormsModule, SearchComponent],
+  imports: [CommonModule, UserHeaderComponent, FormsModule],
   templateUrl: './user-stock-list.component.html',
   styleUrl: './user-stock-list.component.css',
 })
-export class UserStockListComponent implements OnInit {
+export class UserStockListComponent implements OnInit, OnDestroy {
+  private socket!: Socket;
+  private unsubscribe$ = new Subject<void>();
   stocks: Stock[] = [];
   isSellModalOpen = false;
   isBuyModalOpen = false;
@@ -31,8 +40,10 @@ export class UserStockListComponent implements OnInit {
   orderType: 'MARKET' | 'LIMIT' | 'STOP' = 'MARKET';
   userPortfolio: portfolio[] = [];
   userBalance: number = 0;
-  private stockUpdateInterval: NodeJS.Timeout | null = null;
+  isIntraday: boolean = false;
+  currentUser: User | null = null;
 
+  private subscriptions = new Subscription();
   limits: {
     maxBuyLimit: number;
     maxSellLimit: number;
@@ -44,51 +55,67 @@ export class UserStockListComponent implements OnInit {
   };
   constructor(
     private stockService: StockService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private router: Router,
+    private alertService: AlertService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
-    this.fetchStocks();
-    this.startStockDataUpdates();
-    this.fetchUser();
-    this.fetchLimits();
+    this.initializeSocketConnection();
+    this.loadInitialData();
+  }
+  initializeSocketConnection(): void {
+    this.webSocketService
+      .afterFetchUpdate()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((stocks) => {
+        console.log('working0');
+        this.stocks = stocks;
+        console.log(this.stocks);
+      });
+  }
+  loadInitialData(): void {
+    this.apiService
+      .getInitialData()
+      .then(({ stocks, user }) => {
+        this.stocks = stocks;
+        this.userBalance = user.balance;
+        this.userPortfolio = user.portfolio;
+        this.currentUser = user;
+      })
+      .catch((error) =>
+        this.alertService.showAlert('Error loading initial data')
+      );
   }
 
-  fetchStocks(): void {
-    this.apiService.getStocks().subscribe({
-      next: (data) => {
-        this.stocks = data;
-        console.log(data);
-      },
-      error: (err) => {
-        console.error('Error fetching stocks:', err);
-      },
-    });
-  }
-  fetchLimits(): void {
-    this.apiService.getLimits().subscribe({
-      next: (limits) => {
-        this.limits = limits;
-        console.log('Fetched limits:', limits);
-      },
-      error: (err) => {
-        console.error('Error fetching limits:', err);
-      },
-    });
-  }
-  fetchUser(): void {
-    this.apiService.getUserProfile().subscribe({
-      next: (data) => {
-        console.log(data);
-        this.userBalance = data.balance;
-        this.userPortfolio = data.portfolio;
-        console.log(this.userPortfolio, 'portfolio');
-      },
-    });
-  }
+  // private async loadInitialData(): Promise<void> {
+  //   try {
+  //     // Fetch stocks, user data, and limits concurrently
+  //     const [stocksResponse, userResponse] = await Promise.all([
+  //       this.apiService.getStocks().toPromise(),
+  //       this.apiService.getUserProfile().toPromise(),
+  //       // this.apiService.getLimits().toPromise(),
+  //     ]);
+
+  //     // Assign fetched data to component properties
+  //     this.stocks = stocksResponse?.data || [];
+  //     this.userBalance = userResponse?.data.balance || 0;
+  //     this.userPortfolio = userResponse?.data.portfolio || [];
+  //     this.currentUser = userResponse?.data || null;
+  //     // this.limits = limitsResponse || this.limits;
+
+  //     // if (limitsResponse) {
+  //     //   this.limits = limitsResponse || this.limits;
+  //     // } else {
+  //     //   console.warn('Limits response is undefined.');
+  //     // }
+  //   } catch (error) {
+  //     throw new Error('Failed to load initial data');
+  //   }
+  // }
 
   openSellModal(stock: Stock): void {
-    console.log(stock, 'from sell modal');
     this.selectedStock = stock;
     this.isSellModalOpen = true;
     this.sellPrice = stock.price;
@@ -103,26 +130,25 @@ export class UserStockListComponent implements OnInit {
   sellStock(): void {
     if (this.quantityToSell > 0 && this.selectedStock) {
       if (this.quantityToSell > this.limits.maxSellLimit) {
-        alert(
+        this.alertService.showAlert(
           `You cannot sell more than ${this.limits.maxSellLimit} units at a time.`
         );
         return;
       }
-      console.log(this.userPortfolio, 'user from sell');
 
       const stockInPortfolio = this.userPortfolio.find(
         (item) => item.stockId.symbol === this.selectedStock?.symbol
       );
 
-      console.log(this.selectedStock.symbol, 'stock id');
-      console.log(stockInPortfolio, 'stock in portfolio');
       if (
         !stockInPortfolio ||
         stockInPortfolio.quantity < this.quantityToSell
       ) {
-        alert('Not enough stock to sell');
+        this.alertService.showAlert('Not enough stock to sell');
         return;
       }
+
+      console.log(this.selectedStock.originalId);
 
       const orderData: Order = {
         stock: this.selectedStock.originalId,
@@ -133,18 +159,16 @@ export class UserStockListComponent implements OnInit {
         status: 'PENDING',
       };
 
-      this.stockService.placeOrder(orderData).subscribe({
-        next: async () => {
-          await this.updatePortfolioAfterSell(stockInPortfolio);
-
-          this.closeSellModal();
-          this.fetchStocks();
-          alert('Order placed successfully.');
-        },
-        error: (err) => {
-          console.error('Error selling stock:', err);
-        },
-      });
+      this.stockService
+        .placeOrder(orderData)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(
+          () => {
+            this.alertService.showAlert('Sell order placed successfully.');
+            this.closeSellModal();
+          },
+          (error) => this.alertService.showAlert('Error placing sell order.')
+        );
     }
   }
 
@@ -162,22 +186,24 @@ export class UserStockListComponent implements OnInit {
       })
       .filter((item) => item !== null);
 
-    this.apiService.updateUserPortfolio(updatedPortfolio).subscribe({
-      next: (data) => {
-        this.fetchUser();
-      },
-      error: (err) => {
-        console.error('Error updating portfolio:', err);
-      },
-    });
+    const updatedPortfoliosubscription = this.apiService
+      .updateUserPortfolio(updatedPortfolio)
+      .subscribe({
+        next: (data) => {},
+        error: (err) => {
+          console.error('Error updating portfolio:', err);
+        },
+      });
+    this.subscriptions.add(updatedPortfoliosubscription);
   }
 
   openBuyModal(stock: Stock): void {
-    console.log('heloo');
     this.selectedStock = stock;
     this.isBuyModalOpen = true;
     this.buyPrice = stock.price;
-    console.log(this.isBuyModalOpen);
+  }
+  changeStatus() {
+    this.isIntraday = true;
   }
 
   closeBuyModal(): void {
@@ -185,54 +211,109 @@ export class UserStockListComponent implements OnInit {
     this.selectedStock = null;
     this.quantityToBuy = 1;
     this.buyPrice = 0;
+    this.isIntraday = false;
   }
   buyStock(): void {
+    console.log(this.selectedStock._id);
+
     if (this.quantityToBuy > 0 && this.selectedStock) {
       const totalCost = this.buyPrice * this.quantityToBuy;
 
-      // Check if the order exceeds limits
       if (this.quantityToBuy > this.limits.maxBuyLimit) {
-        alert(
+        this.alertService.showAlert(
           `You cannot buy more than ${this.limits.maxBuyLimit} units at a time.`
         );
         return;
       }
 
-      if (this.userBalance < totalCost) {
-        alert('Insufficient balance to buy stock.');
+      if (this.isIntraday) {
+        const leverage = 5;
+        const requiredMargin = totalCost / leverage;
+
+        if (this.userBalance < requiredMargin) {
+          this.alertService.showAlert(
+            `Insufficient margin. Required: $${requiredMargin.toFixed(
+              2
+            )}, Available: $${this.userBalance.toFixed(2)}`
+          );
+          return;
+        }
+      } else if (this.userBalance < totalCost) {
+        this.alertService.showAlert('Insufficient balance to buy stock.');
         return;
       }
 
       const orderData: Order = {
-        stock: this.selectedStock.originalId,
+        stock: this.selectedStock._id,
         type: 'BUY',
         orderType: this.orderType,
         quantity: this.quantityToBuy,
         price: this.buyPrice,
         status: 'PENDING',
+        isIntraday: this.isIntraday,
       };
 
-      this.stockService.placeOrder(orderData).subscribe({
-        next: () => {
-          this.closeBuyModal();
-          this.fetchStocks();
-          alert('Order placed successfully.');
-        },
-        error: (err) => {
-          console.error('Error buying stock:', err);
-        },
-      });
+      const placeOrderSubscription = this.stockService
+        .placeOrder(orderData)
+        .subscribe({
+          next: () => {
+            this.closeBuyModal();
+
+            this.alertService.showAlert('Order placed successfully.');
+          },
+          error: (err) => {
+            console.error('Error buying stock:', err);
+          },
+        });
+      this.subscriptions.add(placeOrderSubscription);
     }
-  }
-  startStockDataUpdates(): void {
-    this.stockUpdateInterval = setInterval(() => {
-      this.fetchStocks();
-    }, 60000);
   }
 
   ngOnDestroy(): void {
-    if (this.stockUpdateInterval) {
-      clearInterval(this.stockUpdateInterval);
+    if (this.socket) {
+      this.socket.disconnect();
     }
+    this.subscriptions.unsubscribe();
+  }
+  dropdownStates = new Map();
+
+  toggleDropdown(stock: Stock) {
+    const currentState = this.dropdownStates.get(stock.symbol) || false;
+    this.dropdownStates.set(stock.symbol, !currentState);
+  }
+
+  isDropdownOpen(stock: Stock): boolean {
+    return this.dropdownStates.get(stock.symbol) || false;
+  }
+
+  addToStockList(stock: Stock) {
+    this.selectedStock = stock;
+    console.log(this.selectedStock.originalId);
+    const watchlist: IWatchlist = {
+      user: this.currentUser,
+      stocks: [
+        {
+          stockId: this.selectedStock.symbol,
+          addedAt: new Date(),
+        },
+      ],
+      name: 'My Watchlist',
+      createdAt: new Date(),
+    };
+    const stockSymbols = stock.symbol;
+
+    this.apiService.addToWatchlist(watchlist).subscribe({
+      next: () => {
+        this.alertService.showAlert(
+          `${stockSymbols} has been added to your stock list.`
+        );
+      },
+    });
+
+    this.dropdownStates.set(stockSymbols, false);
+  }
+  tradingview(stock: Stock) {
+    const symbol = stock.symbol;
+    this.router.navigate(['/tradingview'], { queryParams: { symbol: symbol } });
   }
 }

@@ -1,0 +1,29 @@
+#videos {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.video-player {
+  width: 48%;
+  border-radius: 8px;
+}
+
+.control-container {
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#camera-btn {
+  background-color: rgb(179, 102, 249, 0.9);
+}
+
+#mic-btn {
+  background-color: rgb(179, 102, 249, 0.9);
+}
+
+#leave-btn {
+  background-color: rgb(255, 80, 80);
+}

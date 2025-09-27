@@ -1,53 +1,62 @@
 <div class="flex min-h-screen bg-gray-100 items-center justify-center">
   <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-    <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center">
+    <!-- Page Title -->
+    <h2 class="text-2xl font-semibold text-gray-800 text-center mb-6">
       Forgot Password
     </h2>
-    <p class="mb-6 text-gray-600 text-center">
-      Enter your email, and we'll send you instructions to reset your password.
+
+    <!-- Instructions -->
+    <p class="text-center text-gray-600 mb-6">
+      Enter your email address, and we’ll send you instructions to reset your
+      password.
     </p>
 
     <!-- Forgot Password Form -->
-    <form (ngSubmit)="onSubmit()">
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
       <!-- Email Field -->
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700">Email</label>
+      <div>
+        <label for="email" class="block text-gray-700 font-medium mb-2">
+          Email
+        </label>
         <input
           type="email"
           id="email"
           name="email"
           [(ngModel)]="email"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 focus:outline-none"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-300 focus:outline-none"
+          placeholder="Enter your email"
           required
         />
+        @if(errorMessage){
+        <div class="text-red-500 text-sm mt-2">
+          {{ errorMessage }}
+        </div>
+        }
       </div>
 
       <!-- Submit Button -->
       <button
         type="submit"
         [disabled]="loading"
-        class="w-full px-4 py-2 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-500 focus:outline-none focus:ring focus:ring-green-300"
+        class="w-full py-3 font-semibold text-white bg-green-600 rounded-lg hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-300 transition"
       >
-        Send Reset Link
+        {{ loading ? "Sending..." : "Send Reset Link" }}
       </button>
-
-      <!-- Success and Error Messages -->
-      @if(successMessage){
-      <div class="mt-4 text-green-500 text-center">
-        {{ successMessage }}
-      </div>
-      }@else{
-      <div class="mt-4 text-red-500 text-center">
-        {{ errorMessage }}
-      </div>
-      }
     </form>
 
-    <!-- Back to Login Link -->
-    <p class="mt-6 text-center text-gray-600">
-      <a routerLink="/login" class="text-indigo-600 hover:underline"
-        >Back to Login</a
-      >
+    <!-- Success Message -->
+    @if(successMessage){
+    <div class="text-green-500 text-center text-sm mt-4">
+      {{ successMessage }}
+    </div>
+    }
+
+    <!-- Back to Login -->
+    <p class="text-center text-gray-600 mt-6">
+      Remember your password?
+      <a routerLink="/login" class="text-indigo-600 hover:underline">
+        Login here
+      </a>
     </p>
   </div>
 </div>

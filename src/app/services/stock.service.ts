@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../environments/environment';
 export interface Stock {
   _id: string;
   symbol: string;
@@ -17,20 +17,21 @@ export interface Stock {
   latestTradingDay: string;
 }
 export interface Order {
-  stock: string;
+  stock: Stock;
   type: 'BUY' | 'SELL';
   orderType: 'MARKET' | 'LIMIT' | 'STOP';
   quantity: number;
   price: number; // This is the price for Limit orders
   stopPrice?: number;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED'; // Only for STOP orders
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+  isIntraday?: boolean; // Only for STOP orders
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class StockService {
-  private apiUrl = 'http://localhost:5000';
+  private apiUrl = environment.apiUrl;
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
@@ -76,5 +77,23 @@ export class StockService {
     return this.http.get<{ availableMargin: number; requiredMargin: number }>(
       `${this.apiUrl}/margins`
     );
+  }
+  getStockData(symbol: string | undefined): Observable<any> {
+    return this.http.get(`${this.apiUrl}/getStockData?symbol=${symbol}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getHistroical(symbol: string | undefined): Observable<any> {
+    return this.http.get(`${this.apiUrl}/gethistorical?symbol=${symbol}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getTransactions(symbol: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/transactions`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  getNewFetched(symbol: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/angelStocks/${symbol}`);
   }
 }

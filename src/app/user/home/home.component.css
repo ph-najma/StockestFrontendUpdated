@@ -1,0 +1,29 @@
+.fixed {
+  position: fixed;
+  z-index: 50;
+}
+
+.inset-y-0 {
+  top: 0;
+  bottom: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+.w-96 {
+  width: 24rem; /* Adjust sidebar width */
+}
+
+.translate-x-0 {
+  transform: translateX(0);
+}
+
+.translate-x-full {
+  transform: translateX(100%);
+}
+
+.transition-transform {
+  transition: transform 0.3s ease-in-out;
+}

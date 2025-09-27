@@ -1,0 +1,390 @@
+<!-- ask-ai-interface.component.html -->
+<app-user-header></app-user-header>
+<div class="min-h-screen bg-slate-50">
+  <!-- Header Section -->
+  <div class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-semibold text-slate-900">
+            AI Trading Assistant
+          </h1>
+          <p class="text-sm text-slate-600 mt-1">
+            Get intelligent insights for your trading decisions
+          </p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="text-right">
+            <p class="text-sm text-slate-600">AI Status</p>
+            <div class="flex items-center space-x-2">
+              <div
+                class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+              ></div>
+              <span class="text-sm font-medium text-green-600">Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chat Container -->
+  <div class="px-8 py-6">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Chat Assistant</h2>
+            <p class="text-sm text-slate-600">
+              Ask about markets, stocks, or trading strategies
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 text-sm text-slate-600">
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>Ready to help</span>
+        </div>
+      </div>
+
+      <!-- Conversation Area -->
+      <div class="bg-slate-50 rounded-lg p-4 mb-6" style="height: 500px">
+        <div class="h-full flex flex-col">
+          <div class="flex-1 overflow-y-auto space-y-4 pr-2">
+            <!-- Welcome Message -->
+            <div *ngIf="conversation.length === 0" class="text-center py-12">
+              <div
+                class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              >
+                <svg
+                  class="w-8 h-8 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold text-slate-900 mb-2">
+                Welcome to AI Trading Assistant
+              </h3>
+              <p class="text-slate-600 text-sm max-w-md mx-auto">
+                Ask me anything about market trends, stock analysis, trading
+                strategies, or investment advice. I'm here to help you make
+                informed decisions.
+              </p>
+            </div>
+
+            <!-- Messages -->
+            <div
+              *ngFor="let message of conversation; let i = index"
+              class="flex"
+              [ngClass]="
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              "
+            >
+              <div
+                class="flex items-start space-x-3 max-w-[80%]"
+                [ngClass]="
+                  message.role === 'user'
+                    ? 'flex-row-reverse space-x-reverse'
+                    : ''
+                "
+              >
+                <!-- Avatar -->
+                <div
+                  class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  [ngClass]="
+                    message.role === 'user'
+                      ? 'bg-gradient-to-br from-blue-600 to-indigo-600'
+                      : 'bg-gradient-to-br from-slate-600 to-slate-700'
+                  "
+                >
+                  <svg
+                    *ngIf="message.role === 'user'"
+                    class="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    ></path>
+                  </svg>
+                  <svg
+                    *ngIf="message.role === 'assistant'"
+                    class="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    ></path>
+                  </svg>
+                </div>
+                <!-- Message Content -->
+                <div
+                  class="bg-white rounded-xl shadow-sm border p-4"
+                  [ngClass]="
+                    message.role === 'user'
+                      ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50'
+                      : 'border-slate-200'
+                  "
+                >
+                  <p
+                    class="text-sm"
+                    [ngClass]="
+                      message.role === 'user'
+                        ? 'text-blue-900'
+                        : 'text-slate-800'
+                    "
+                  >
+                    {{ message?.content }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex justify-start">
+              <div class="flex items-start space-x-3 max-w-[80%]">
+                <div
+                  class="w-8 h-8 bg-gradient-to-br from-slate-600 to-slate-700 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    ></path>
+                  </svg>
+                </div>
+                <div
+                  class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center space-x-2"
+                >
+                  <div class="flex space-x-1">
+                    <div
+                      class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
+                    ></div>
+                    <div
+                      class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
+                      style="animation-delay: 0.2s"
+                    ></div>
+                    <div
+                      class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
+                      style="animation-delay: 0.4s"
+                    ></div>
+                  </div>
+                  <span class="text-sm text-slate-600">AI is thinking...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <form [formGroup]="queryForm" (ngSubmit)="onSubmit()" class="relative">
+        <div
+          class="bg-white rounded-lg border border-slate-200 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200"
+        >
+          <input
+            formControlName="query"
+            type="text"
+            placeholder="Ask about market trends, stock analysis, or trading strategies..."
+            class="w-full p-4 pr-12 bg-transparent border-0 rounded-lg text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-0"
+          />
+          <button
+            type="submit"
+            [disabled]="isLoading || !queryForm.get('query')?.value?.trim()"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            <svg
+              *ngIf="!isLoading"
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              ></path>
+            </svg>
+            <svg
+              *ngIf="isLoading"
+              class="w-4 h-4 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-slate-500 mt-2 flex items-center">
+          <svg
+            class="w-3 h-3 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          Press Enter to send your message
+        </p>
+      </form>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <button
+        class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 p-4 rounded-lg hover:shadow-md transition-all duration-200 text-left group"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition-colors duration-200"
+          >
+            <svg
+              class="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-blue-900">Market Analysis</h3>
+            <p class="text-sm text-blue-700">
+              Get insights on current market trends
+            </p>
+          </div>
+        </div>
+      </button>
+
+      <button
+        class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 p-4 rounded-lg hover:shadow-md transition-all duration-200 text-left group"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center group-hover:bg-green-700 transition-colors duration-200"
+          >
+            <svg
+              class="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-green-900">Stock Recommendations</h3>
+            <p class="text-sm text-green-700">
+              Find promising investment opportunities
+            </p>
+          </div>
+        </div>
+      </button>
+
+      <button
+        class="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 p-4 rounded-lg hover:shadow-md transition-all duration-200 text-left group"
+      >
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center group-hover:bg-amber-700 transition-colors duration-200"
+          >
+            <svg
+              class="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-amber-900">Trading Strategies</h3>
+            <p class="text-sm text-amber-700">
+              Learn effective trading techniques
+            </p>
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>

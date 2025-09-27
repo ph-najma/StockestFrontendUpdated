@@ -1,0 +1,40 @@
+<table class="w-full border-collapse">
+  <thead class="bg-blue-100">
+    <tr>
+      <th
+        *ngFor="let header of headers"
+        class="p-3 text-left flex items-center text-black"
+      >
+        {{ header }}
+        <button class="ml-2 hover:bg-blue-200 rounded-full p-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-4 w-4 text-gray-600"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 15l6-6 6 6"
+            />
+          </svg>
+        </button>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let item of data"
+      class="border-b border-green-100 hover:bg-green-50/30 transition-colors"
+    >
+      <!-- Loop through each column dynamically -->
+      <td *ngFor="let header of headers" class="p-3 font-medium text-gray-800">
+        {{ item[formatHeader(header)] }}
+        <!-- Call the formatHeader method here -->
+      </td>
+    </tr>
+  </tbody>
+</table>
