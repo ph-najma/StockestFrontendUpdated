@@ -10,7 +10,8 @@ import {
   LoginData,
 } from '../interfaces/userInterface';
 import { ResponseModel } from '../interfaces/userInterface';
-import { environment } from '../../environments/environment';
+// import { environment } from '../../environments/environment.';
+import { environment } from '../../environments/environment.prod';
 import { response } from 'express';
 
 export interface User {
