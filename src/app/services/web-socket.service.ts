@@ -13,6 +13,7 @@ export class WebSocketService {
     this.socket = io(environment.socketUrl, {
       auth: {
         token: token,
+        transports: ['websocket', 'polling'],
       },
     });
     this.socket.on('connect', () => {

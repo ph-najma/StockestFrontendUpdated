@@ -5,14 +5,12 @@ import { CommonModule } from '@angular/common';
 import { Order } from '../../services/stock.service';
 import { UserHeaderComponent } from '../user-header/user-header.component';
 import { FormsModule } from '@angular/forms';
-import { SearchComponent } from '../search/search.component';
 import { Stock } from '../../services/api.service';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../services/web-socket.service';
 import { Subscription, Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { AlertService } from '../../services/alert.service';
-import { ResponseModel } from '../../interfaces/userInterface';
 import { takeUntil } from 'rxjs/operators';
 interface portfolio {
   quantity: number;
