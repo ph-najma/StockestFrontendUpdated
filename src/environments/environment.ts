@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api',
-  socketUrl: 'http://localhost:5000',
+  apiUrl: 'https://stockestbackendupdated-6.onrender.com/api',
+  socketUrl: 'https://stockestbackendupdated-6.onrender.com',
   imagekit: {
     publicKey: 'public_pZBGxMLwQ3pMHB3KwPz8VviSrUg=',
     urlEndpoint: 'https://ik.imagekit.io/ywu82nunsc',
