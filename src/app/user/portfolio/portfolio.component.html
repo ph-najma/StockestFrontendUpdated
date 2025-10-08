@@ -423,6 +423,95 @@
           </button>
         </div>
       </div>
+      <!-- Pagination -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-6 pt-6 border-t border-slate-200"
+      >
+        <div class="text-sm text-slate-600 mb-4 sm:mb-0">
+          Showing
+          <span class="font-medium">{{
+            (currentPage - 1) * itemsPerPage + 1
+          }}</span>
+          to
+          <span class="font-medium">{{
+            Math.min(currentPage * itemsPerPage, portfolio.length)
+          }}</span>
+          of <span class="font-medium">{{ portfolio.length }}</span> results
+        </div>
+        <div class="flex items-center space-x-2">
+          <button
+            class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            <svg
+              class="w-4 h-4 mr-1 inline"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+            Previous
+          </button>
+
+          <ng-container *ngFor="let page of getPageNumbers()">
+            <button
+              *ngIf="page <= totalPages"
+              class="px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200"
+              [ngClass]="{
+                'text-white bg-blue-600 border-blue-600 hover:bg-blue-700':
+                  page === currentPage,
+                'text-slate-500 bg-white border-slate-300 hover:bg-slate-50 hover:text-slate-700':
+                  page !== currentPage
+              }"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </ng-container>
+
+          <span
+            *ngIf="totalPages > 5 && currentPage < totalPages - 2"
+            class="px-3 py-2 text-sm font-medium text-slate-500"
+            >...</span
+          >
+
+          <button
+            *ngIf="totalPages > 5 && currentPage < totalPages - 2"
+            class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 hover:text-slate-700 transition-colors duration-200"
+            (click)="goToPage(totalPages)"
+          >
+            {{ totalPages }}
+          </button>
+
+          <button
+            class="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-md hover:bg-slate-50 hover:text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            Next
+            <svg
+              class="w-4 h-4 ml-1 inline"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

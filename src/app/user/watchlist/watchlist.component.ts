@@ -15,6 +15,8 @@ import { RouterModule } from '@angular/router';
 import { io, Socket } from 'socket.io-client';
 import { AlertService } from '../../services/alert.service';
 import { Subscription } from 'rxjs';
+import { User } from '../../services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-watchlist',
@@ -25,13 +27,16 @@ import { Subscription } from 'rxjs';
 export class WatchlistComponent implements OnInit, OnDestroy {
   stocks: any[] = [];
   private socket!: Socket;
+  currentUser!: User;
+  selectedStock: any = null;
   private stockUpdateInterval: NodeJS.Timeout | null = null;
   private subscriptions = new Subscription();
   constructor(
     private apiService: ApiService,
     private faIconLibrary: FaIconLibrary,
     private socketService: WebSocketService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private router: Router
   ) {
     this.faIconLibrary.addIcons(
       faStar,
@@ -40,30 +45,34 @@ export class WatchlistComponent implements OnInit, OnDestroy {
       faEllipsisVertical
     );
   }
-  initializeSocketConnection(): void {
-    this.socket = io('http://localhost:5000');
+  // initializeSocketConnection(): void {
+  //   this.socket = io('http://localhost:5000');
 
-    this.socket.on('stockUpdate', (data: Stock[]) => {
-      // Only update stocks that exist in the current watchlist
-      this.stocks = this.stocks.map((stock) => {
-        const updatedStock = data.find(
-          (update) => update.symbol === stock.symbol
-        );
-        return updatedStock ? { ...stock, ...updatedStock } : stock;
-      });
-    });
-  }
+  //   this.socket.on('stockUpdate', (data: Stock[]) => {
+  //     // Only update stocks that exist in the current watchlist
+  //     this.stocks = this.stocks.map((stock) => {
+  //       const updatedStock = data.find(
+  //         (update) => update.symbol === stock.symbol
+  //       );
+  //       return updatedStock ? { ...stock, ...updatedStock } : stock;
+  //     });
+  //   });
+  // }
 
   ngOnInit(): void {
     this.fetchWatchlist();
     this.listenForStockUpdates();
     this.listenForNotifications();
-    this.initializeSocketConnection();
+    // this.initializeSocketConnection();
+  }
+  viewDetails(symbol: string) {
+    this.router.navigate(['/stockdetails', symbol]);
   }
 
   fetchWatchlist(): void {
     const watchlistSubscription = this.apiService.getWatchlist().subscribe({
       next: (response: any) => {
+        console.log(response, 'from watchlist');
         this.stocks = response.data.stocks.filter(
           (stock: any) => stock._id && stock.symbol
         );
@@ -74,6 +83,26 @@ export class WatchlistComponent implements OnInit, OnDestroy {
       },
     });
     this.subscriptions.add(watchlistSubscription);
+  }
+  removeFromWatchlist(symbol: string) {
+    console.log(symbol);
+    this.apiService.removeFromWathclist(symbol).subscribe({
+      next: (res) => {
+        this.stocks = this.stocks.filter((stock) => stock.symbol !== symbol);
+        this.alertService.showAlert(`${symbol} removed from your watchlist.`);
+      },
+      error: (err) => console.error(err),
+    });
+  }
+  loadInitialData(): void {
+    this.apiService
+      .getInitialData()
+      .then(({ user }) => {
+        this.currentUser = user;
+      })
+      .catch((error) =>
+        this.alertService.showAlert('Error loading initial data')
+      );
   }
 
   listenForStockUpdates() {

@@ -20,20 +20,43 @@ export class PortfolioComponent implements OnInit, OnDestroy {
     overallProfit: 0,
     todaysProfit: 0,
   };
+  currentPage: number = 1;
+  totalOrders: number = 0;
+  totalPages: number = 1;
+  limit: number = 10;
   private subscription = new Subscription();
   selectedStock: Stock | null = null;
 
   constructor(private apiService: ApiService, private socket: Socket) {}
 
   ngOnInit(): void {
-    this.fetchPortfolio();
+    this.fetchPortfolio(this.currentPage);
     this.socket.on('portfolioSummaryUpdate', (data: any) => {
       console.log('connected socket');
       this.updatePortfolioSummary(data);
     });
   }
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.fetchPortfolio(page);
+    }
+  }
+  itemsPerPage = 10; // or whatever number you prefer
+  Math = Math;
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages, this.currentPage + 2);
 
-  fetchPortfolio(): void {
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  fetchPortfolio(page: number): void {
     const portfolioSubscription = this.apiService.getPortfolio().subscribe(
       (response: PortfolioResponseModel) => {
         if (response.data) {

@@ -68,6 +68,12 @@ export class TradeDiaryComponent implements OnInit, OnDestroy {
   setSelectedView(view: string) {
     this.selectedView = view;
   }
+
+  onDateSelect(event: any) {
+    // Handle PrimeNG calendar date selection
+    this.selectedDate = event;
+    this.fetchdata();
+  }
   ngOnInit(): void {
     // this.nitializeTradeData();
     this.fetchdata();
@@ -109,11 +115,13 @@ export class TradeDiaryComponent implements OnInit, OnDestroy {
   }
 
   onDayClick(day: number) {
-    // Format the date as 'YYYY-MM-DD'
-    const selectedDateStr = `${this.selectedDate.getFullYear()}-${
-      this.selectedDate.getMonth() + 1
-    }-${day}`;
-    this.selectedDate = new Date(selectedDateStr);
+    // Create a new date object for the selected day
+    const newDate = new Date(
+      this.selectedDate.getFullYear(),
+      this.selectedDate.getMonth(),
+      day
+    );
+    this.selectedDate = newDate;
     this.fetchdata(); // Fetch the data for the selected date
   }
 
@@ -154,11 +162,17 @@ export class TradeDiaryComponent implements OnInit, OnDestroy {
   }
 
   prevMonth() {
-    this.selectedDate.setMonth(this.selectedDate.getMonth() - 1);
+    const newDate = new Date(this.selectedDate);
+    newDate.setMonth(newDate.getMonth() - 1);
+    this.selectedDate = newDate;
+    this.fetchdata(); // Refresh data for the new month
   }
 
   nextMonth() {
-    this.selectedDate.setMonth(this.selectedDate.getMonth() + 1);
+    const newDate = new Date(this.selectedDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    this.selectedDate = newDate;
+    this.fetchdata(); // Refresh data for the new month
   }
 
   getMonthYear(date: Date): string {
@@ -189,6 +203,27 @@ export class TradeDiaryComponent implements OnInit, OnDestroy {
       .fill(null)
       .map((_, idx) => idx + 1);
     return days;
+  }
+
+  isSelectedDate(day: number): boolean {
+    const displayedMonth = this.selectedDate.getMonth();
+    const displayedYear = this.selectedDate.getFullYear();
+    const selectedDay = this.selectedDate.getDate();
+
+    return (
+      selectedDay === day &&
+      this.selectedDate.getMonth() === displayedMonth &&
+      this.selectedDate.getFullYear() === displayedYear
+    );
+  }
+
+  isToday(day: number): boolean {
+    const today = new Date();
+    return (
+      day === today.getDate() &&
+      this.selectedDate.getMonth() === today.getMonth() &&
+      this.selectedDate.getFullYear() === today.getFullYear()
+    );
   }
 
   handleTradeClick(trade: any) {

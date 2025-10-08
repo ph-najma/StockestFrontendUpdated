@@ -6,7 +6,6 @@ import {
   PortfolioResponseModel,
 } from '../../interfaces/userInterface';
 import { UserHeaderComponent } from '../user-header/user-header.component';
-import { SearchComponent } from '../search/search.component';
 import { Socket } from 'ngx-socket-io';
 import { CommonModule, NgClass } from '@angular/common';
 import { AddMoneyComponent } from '../add-money/add-money.component';
@@ -32,6 +31,9 @@ export class HomeComponent implements OnDestroy, OnInit {
     todaysProfit: 0,
     currentValue: 0,
   };
+  marginused: number = 0;
+  utilization: any;
+  userBalance: any;
   private subscription = new Subscription();
   constructor(
     private apiService: ApiService,
@@ -44,9 +46,18 @@ export class HomeComponent implements OnDestroy, OnInit {
       console.log('connected socket');
       this.updatePortfolioSummary(data);
     });
+    this.getMoneyDetails();
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+  getMoneyDetails(): void {
+    this.apiService.getMoneyDetails().subscribe((res) => {
+      console.log(res.data, 'resposnse');
+      this.utilization = res.data.utilization;
+      this.marginused = res.data.marginUsed;
+      this.userBalance = res.data.available;
+    });
   }
 
   fetchPortfolio(): void {

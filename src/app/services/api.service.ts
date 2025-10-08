@@ -10,8 +10,8 @@ import {
   LoginData,
 } from '../interfaces/userInterface';
 import { ResponseModel } from '../interfaces/userInterface';
-// import { environment } from '../../environments/environment.';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
+// import { environment } from '../../environments/environment.prod';
 import { response } from 'express';
 
 export interface User {
@@ -164,7 +164,8 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/adminHome`);
   }
   getUserProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/Userprofile`, {
+    // backend route is "/UserProfile" (capital P)
+    return this.http.get(`${this.apiUrl}/UserProfile`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -208,6 +209,12 @@ export class ApiService {
       }
     );
   }
+  getMoneyDetails(): Observable<any> {
+    console.log('moneydetails called');
+    return this.http.get<any>(`${this.apiUrl}/getMoneyDetails`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
   getTotalFees(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/getFees`, {
       headers: this.getAuthHeaders(),
@@ -237,6 +244,13 @@ export class ApiService {
       { headers: this.getAuthHeaders() }
     );
   }
+  removeFromWathclist(symbol: string): Observable<any> {
+    return this.http.post<IWatchlist>(
+      `${this.apiUrl}/removeStockFromWatchlist`,
+      { symbol },
+      { headers: this.getAuthHeaders() }
+    );
+  }
   getWatchlist(): Observable<any> {
     return this.http.get(`${this.apiUrl}/getWatchlist`, {
       headers: this.getAuthHeaders(),
@@ -258,6 +272,15 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/promotions`, {
       headers: this.getAuthHeaders(),
     });
+  }
+
+  // Save profile image URL to backend
+  updateProfilePhoto(profileImageUrl: string): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/update-profile`,
+      { profileImageUrl },
+      { headers: this.getAuthHeaders() }
+    );
   }
   getTradeDiary(): Observable<any> {
     return this.http.get(`${this.apiUrl}/tradeDiary`, {

@@ -4,6 +4,7 @@ import { UserHeaderComponent } from '../user-header/user-header.component';
 import { ApiService } from '../../services/api.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { ImagekitUploadService } from '../../services/imagekit-upload.service';
 interface Rewards {
   signupBonus?: {
     enabled: boolean;
@@ -45,7 +46,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   isEligibleForReferralBonus: boolean = false;
   isEligibleForLoyaltyRewards: boolean = false;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private uploadService: ImagekitUploadService
+  ) {}
   ngOnInit(): void {
     this.fetchUserDetails();
   }
@@ -77,15 +81,29 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(promotionSubscription);
   }
-  onPhotoUpload(event: any): void {
+  async onPhotoUpload(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.user.profilePhoto = reader.result as string;
-        // Optionally, send the updated photo to the backend here
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    try {
+      const result = await this.uploadService.upload(file);
+      const imageUrl = result?.url || result?.filePath || result?.thumbnailUrl;
+      if (imageUrl) {
+        // Update UI immediately
+        this.user.profilePhoto = imageUrl;
+        // Persist to backend
+        this.apiService.updateProfilePhoto(imageUrl).subscribe({
+          next: () => {
+            console.log('✅ Profile photo saved');
+          },
+          error: (err) => {
+            console.error('❌ Failed to save profile photo:', err);
+          },
+        });
+      }
+      console.log('✅ Uploaded Successfully:', result);
+    } catch (err) {
+      console.error('❌ Upload Failed:', err);
     }
   }
   resetPhoto(): void {

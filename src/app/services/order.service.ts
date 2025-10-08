@@ -3,8 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, Stock } from './api.service';
 import { OrderResponse } from '../interfaces/userInterface';
-// import { environment } from '../../environments/environment';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
+// import { environment } from '../../environments/environment.prod';
 import { env } from 'process';
 export interface IOrder {
   _id: string;
