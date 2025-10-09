@@ -1,8 +1,8 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { UserHeaderComponent } from '../user-header/user-header.component';
-import { ApiService } from '../../services/api.service';
-import { Transaction } from '../../services/api.service';
+import { ApiService, TransactionDto } from '../../services/api.service';
+import { ResponseModel } from '../../interfaces/userInterface';
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-transaction-history',
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './transaction-history.component.css',
 })
 export class TransactionHistoryComponent implements OnInit {
-  transactionData: Transaction[] = [];
+  transactionData: TransactionDto[] = [];
   private subscriptions = new Subscription();
   constructor(private apiService: ApiService) {}
 
@@ -23,7 +23,7 @@ export class TransactionHistoryComponent implements OnInit {
     const transactionSubscription = this.apiService
       .getTransactions()
       .subscribe({
-        next: (response: any) => {
+        next: (response: ResponseModel<TransactionDto[]>) => {
           if (response.data) {
             this.transactionData = response.data;
           }

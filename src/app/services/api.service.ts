@@ -12,7 +12,7 @@ import {
 import { ResponseModel } from '../interfaces/userInterface';
 import { environment } from '../../environments/environment';
 // import { environment } from '../../environments/environment.prod';
-import { response } from 'express';
+// removed invalid express import
 
 export interface User {
   _id: string;
@@ -33,6 +33,18 @@ export interface Transaction {
   totalAmount: number;
   completedAt: Date;
   status: string;
+}
+// DTO returned by backend
+export interface TransactionDto {
+  id: string;
+  userId: string;
+  amount: number;
+  type: string;
+  createdAt: string;
+  stock?: Stock | string;
+  quantity?: number;
+  price?: number;
+  status?: string;
 }
 export interface Company {
   symbol: string;
@@ -191,15 +203,21 @@ export class ApiService {
       headers: this.getAuthHeaders(),
     });
   }
-  getTransactions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/transactions`, {
-      headers: this.getAuthHeaders(),
-    });
+  getTransactions(): Observable<ResponseModel<TransactionDto[]>> {
+    return this.http.get<ResponseModel<TransactionDto[]>>(
+      `${this.apiUrl}/transactions`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
-  getAllTrans(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/allTransactions`, {
-      headers: this.getAuthHeaders(),
-    });
+  getAllTrans(): Observable<ResponseModel<TransactionDto[]>> {
+    return this.http.get<ResponseModel<TransactionDto[]>>(
+      `${this.apiUrl}/allTransactions`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
   getUserPortfolio(userId: string | null): Observable<PortfolioResponse> {
     return this.http.get<PortfolioResponse>(
