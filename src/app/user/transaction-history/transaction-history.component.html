@@ -225,15 +225,15 @@
                   class="px-6 py-4 whitespace-nowrap"
                 >
                   <div class="text-sm font-medium text-slate-600">
-                    #{{ transaction._id.slice(-8).toUpperCase() }}
+                    #{{ (transaction.id || "").slice(-8).toUpperCase() }}
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-slate-900">
-                    {{ transaction.completedAt | date : "MMM d, y" }}
+                    {{ transaction.createdAt | date : "MMM d, y" }}
                   </div>
                   <div class="text-sm text-slate-500">
-                    {{ transaction.completedAt | date : "h:mm a" }}
+                    {{ transaction.createdAt | date : "h:mm a" }}
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -274,15 +274,15 @@
                       class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3"
                     >
                       <span class="text-xs font-bold text-white">
-                        {{ transaction.stock.symbol.charAt(0) }}
+                        {{ getInitial(transaction) }}
                       </span>
                     </div>
                     <div>
                       <div class="text-sm font-medium text-slate-900">
-                        {{ transaction.stock.symbol }}
+                        {{ getSymbol(transaction) }}
                       </div>
                       <div class="text-sm text-slate-500">
-                        {{ transaction.stock.symbol || "Stock Name" }}
+                        {{ getSymbol(transaction) || "Stock Name" }}
                       </div>
                     </div>
                   </div>
@@ -303,7 +303,7 @@
                   class="px-6 py-4 whitespace-nowrap"
                 >
                   <div class="text-sm font-semibold text-slate-900">
-                    ₹{{ transaction.totalAmount | number : "1.2-2" }}
+                    ₹{{ getTotal(transaction) | number : "1.2-2" }}
                   </div>
                 </td>
                 <td

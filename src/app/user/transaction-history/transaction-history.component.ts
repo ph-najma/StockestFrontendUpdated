@@ -1,7 +1,7 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { UserHeaderComponent } from '../user-header/user-header.component';
-import { ApiService, TransactionDto } from '../../services/api.service';
+import { ApiService, TransactionDto, Stock } from '../../services/api.service';
 import { ResponseModel } from '../../interfaces/userInterface';
 import { Subscription } from 'rxjs';
 @Component({
@@ -25,6 +25,7 @@ export class TransactionHistoryComponent implements OnInit {
       .subscribe({
         next: (response: ResponseModel<TransactionDto[]>) => {
           if (response.data) {
+            console.log(response.data);
             this.transactionData = response.data;
           }
         },
@@ -57,5 +58,23 @@ export class TransactionHistoryComponent implements OnInit {
 
   toggleColumnVisibility(column: keyof typeof this.columnVisibility): void {
     this.columnVisibility[column] = !this.columnVisibility[column];
+  }
+
+  // Helpers to avoid strict template union type errors
+  getSymbol(tx: TransactionDto): string {
+    const s = tx.stock as string | Stock | undefined;
+    return typeof s === 'string' ? s : s?.symbol ?? '';
+  }
+
+  getInitial(tx: TransactionDto): string {
+    const sym = this.getSymbol(tx);
+    return sym ? sym.charAt(0) : '';
+  }
+
+  getTotal(tx: TransactionDto): number {
+    if (typeof tx.amount === 'number') return tx.amount;
+    const price = tx.price ?? 0;
+    const qty = tx.quantity ?? 0;
+    return price * qty;
   }
 }
